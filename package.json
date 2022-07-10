@@ -1,0 +1,56 @@
+{
+    "name": "example-project",
+    "version": "1.0.0",
+    "description": "Initial IDAProject frontend nuxt repository",
+    "scripts": {
+        "dev": "nuxt",
+        "build": "nuxt build",
+        "start": "nuxt start",
+        "el:check": "eslint --ext .js --ext .vue .",
+        "sl:check": "stylelint \"**/*.{scss,vue}\"",
+        "lint:check": "npm run el:check && npm run sl:check",
+        "el:fix": "eslint --ext .vue --ext .js . --fix",
+        "sl:fix": "stylelint \"**/*.{scss,vue}\" --fix",
+        "lint:fix": "npm run el:fix && npm run sl:fix",
+        "postinstall": "npx simple-git-hooks"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.idacloud.ru:Idaproject/internal/example-project.git"
+    },
+    "author": "idaproject",
+    "license": "ISC",
+    "dependencies": {
+        "@nuxtjs/auth": "^4.9.1",
+        "@nuxtjs/axios": "^5.9.7",
+        "@nuxtjs/dotenv": "^1.4.1",
+        "@nuxtjs/proxy": "^2.0.1",
+        "@nuxtjs/sentry": "^4.5.0",
+        "@nuxtjs/style-resources": "^1.0.0",
+        "@nuxtjs/svg-sprite": "^0.5.1",
+        "normalize.css": "^8.0.1",
+        "nuxt": "^2.15.8",
+        "nuxt-polyfill": "^1.0.3",
+        "qs": "^6.9.6",
+        "swiper": "^7.2.0"
+    },
+    "devDependencies": {
+        "@babel/eslint-parser": "^7.17.0",
+        "@babel/preset-env": "^7.17.10",
+        "@nuxtjs/eslint-module": "^3.0.1",
+        "@nuxtjs/stylelint-module": "^4.0.0",
+        "eslint": "^8.14.0",
+        "eslint-plugin-vue": "^8.7.1",
+        "nano-staged": "^0.5.0",
+        "sass": "^1.51.0",
+        "sass-loader": "10.1.1",
+        "simple-git-hooks": "^2.7.0",
+        "stylelint": "^13.7.1",
+        "stylelint-config-css-modules": "^2.2.0",
+        "stylelint-config-standard": "^20.0.0",
+        "stylelint-order": "^4.1.0",
+        "stylelint-scss": "^3.18.0",
+        "stylelint-webpack-plugin": "^2.1.1",
+        "resize-observer-polyfill": "^1.5.1"
+    }
+}

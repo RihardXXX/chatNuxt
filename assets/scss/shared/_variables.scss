@@ -1,0 +1,26 @@
+/*  Fonts */
+
+$base-font: 'Source Sans Pro', sans-serif;
+$base-font-size: 16px;
+
+/* Colors */
+
+$black-100: #4e4e4e;
+$black-300: #555;
+$black-400: #333;
+$black-600: #222;
+$black-900: #111;
+
+/* Grid */
+
+$offset: 4px;
+
+/* Breakpoints */
+
+$breakpoints: (
+    mobile: 412px,
+    mobile-l: 812px,
+    tablet: 1024px,
+    laptop: 1440px,
+    desktop: 1920px,
+);

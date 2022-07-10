@@ -1,0 +1,18 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-y: scroll;
+    font-family: $base-font;
+    font-size: $base-font-size;
+    color: $black-400;
+}
+
+html,
+body,
+#__nuxt,
+#__layout {
+    width: 100%;
+    height: 100%;
+}

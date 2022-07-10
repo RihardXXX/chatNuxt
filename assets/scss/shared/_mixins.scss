@@ -1,0 +1,28 @@
+/* Media queries mixins */
+
+@mixin respond-to($name) {
+    $max: map-get($breakpoints, $name);
+
+    @if $max {
+        @media only screen and (max-width: $max) {
+            @content;
+        }
+    }
+
+    @else {
+        @content;
+    }
+}
+
+/* Adds mixins */
+
+@mixin aspect-ratio($width, $height) {
+    position: relative;
+
+    &:before {
+        content: '';
+        display: block;
+        width: 100%;
+        padding-top: ($height / $width) * 100%;
+    }
+}
