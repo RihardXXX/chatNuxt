@@ -79,7 +79,7 @@ module.exports = {
     },
 
     // Global CSS
-    css: ['~/assets/scss/bundle.scss'],
+    css: ['~/assets/scss/vendors.scss', '~/assets/scss/bundle.scss'],
 
     styleResources: {
         scss: '~/assets/scss/shared/*.scss',

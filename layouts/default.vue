@@ -3,7 +3,7 @@
 
         <TheModal :class="$style.modal" />
 
-        <TheHeader />
+        <!--        <TheHeader />-->
 
         <main :class="$style.page">
             <Nuxt />
@@ -14,12 +14,12 @@
 
 <script>
 import TheModal from '@/components/default/TheModal';
-import TheHeader from '~/components/default/TheHeader';
+// import TheHeader from '~/components/default/TheHeader';
 export default {
     name: 'Default',
     components: {
         TheModal,
-        TheHeader,
+        // TheHeader,
     },
 };
 </script>
