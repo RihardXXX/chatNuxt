@@ -32,32 +32,47 @@
                     {{ titleForm }}
                 </h2>
             </div>
-            <transition name="layout">
-                <div v-if="step === 1"
-                     :class="$style.contentRegister"
+            <div v-if="step === 1"
+                 :class="$style.contentRegister"
+            >
+                <div :class="$style.itemRegister"
+                     @click="startRegister"
                 >
-                    <div :class="$style.itemRegister"
-                         @click="startRegister"
-                    >
-                        регистрация
-                    </div>
-                    <div :class="$style.itemLogin"
-                         @click="startLogin"
-                    >
-                        войти
-                    </div>
+                    регистрация
                 </div>
-                <div v-else-if="step === 2"
-                     :class="$style.contentRegister"
+                <div :class="$style.border"></div>
+                <div :class="$style.itemLogin"
+                     @click="startLogin"
                 >
-                    register
+                    войти
                 </div>
-                <div v-else-if="step === 3"
-                     :class="$style.contentRegister"
-                >
-                    login
-                </div>
-            </transition>
+            </div>
+            <div v-else-if="step === 2"
+                 :class="$style.contentRegister"
+            >
+                <form :class="$style.form">
+                    <VInput label="ваше имя"
+                            :value="name"
+                            :class-container="$style.inputItem"
+                            @input="setName"
+                    />
+                    <VInput label="ваше почта"
+                            :value="email"
+                            :class-container="$style.inputItem"
+                            @input="setEmail"
+                    />
+                    <VInput label="ваш пароль"
+                            :value="password"
+                            :class-container="$style.inputItem"
+                            @input="setPassword"
+                    />
+                </form>
+            </div>
+            <div v-else-if="step === 3"
+                 :class="$style.contentRegister"
+            >
+                login
+            </div>
         </div>
     </div>
 </template>
@@ -65,6 +80,7 @@
 <script>
 // import ImageLazy from '~/components/common/ImageLazy';
 import Swiper from 'swiper/swiper-bundle.min';
+import VInput from '~/components/input/VInput';
 import { addResizeListener, removeResizeListener } from '~/assets/js/utils/resizeUtils';
 
 export default {
@@ -72,6 +88,7 @@ export default {
 
     components: {
         // ImageLazy,
+        VInput,
     },
 
     data() {
@@ -101,6 +118,10 @@ export default {
                     src: require('~/static/images/slide3.jpeg'),
                 },
             ],
+
+            name: '',
+            email: '',
+            password: '',
         };
     },
 
@@ -197,15 +218,28 @@ export default {
         startLogin() {
             this.step = 3;
         },
+
+        // установка имени
+        setName(e) {
+            this.name = e;
+        },
+
+        setEmail(e) {
+            this.email = e;
+        },
+
+        setPassword(e) {
+            this.password = e;
+        },
     },
 };
 </script>
 
 <style lang="scss" module>
     .IndexPage {
+        overflow: hidden;
         width: 100%;
         height: 100vh;
-        overflow: hidden;
     }
 
     .swiper {
@@ -252,23 +286,23 @@ export default {
     }
 
     .registerSection {
-        min-width: 30rem;
-        z-index: 100;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        z-index: 100;
+        overflow: hidden;
+        min-width: 30rem;
         border-radius: 1.2rem;
         background-color: $white;
-        overflow: hidden;
+        transform: translate(-50%, -50%);
     }
 
     .headerRegister {
-        padding: 1.3rem 1.1rem;
-        background-color: $black-bg;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 1.3rem 1.1rem;
+        background-color: $black-bg;
 
         &_active {
             justify-content: flex-start;
@@ -280,47 +314,73 @@ export default {
     }
 
     .titleRegister {
-        font-weight: 600;
+        text-align: center;
         font-size: 1.6rem;
+        font-weight: 600;
         //line-height: 2rem;
         color: $white;
-        text-align: center;
     }
 
     .contentRegister {
+        position: relative;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem 1.3rem;
     }
 
     .itemRegister {
         width: 50%;
-        padding: 1rem 2rem;
-        cursor: pointer;
-        color: $green-main;
-        font-weight: 500;
-        font-size: 1.8rem;
-        cursor: pointer;
+        //padding: 1rem 2rem;
         text-align: center;
+        font-size: 1.8rem;
+        font-weight: 500;
+        color: $green-main;
+        cursor: pointer;
+    }
+
+    .border {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 1px;
+        background-color: #c6c6c6;
+        height: 100%;
     }
 
     .itemLogin {
         width: 50%;
-        padding: 1rem 2rem;
-        border-left: 1px solid #C6C6C6;
-        color: $blue-main;
-        font-weight: 500;
-        font-size: 1.8rem;
-        cursor: pointer;
+        //padding: 1rem 2rem;
         text-align: center;
+        font-size: 1.8rem;
+        font-weight: 500;
+        color: $blue-main;
+        cursor: pointer;
     }
 
     .iconBack {
         width: 1.6rem;
         height: 1.6rem;
-        fill: $white;
-        cursor: pointer;
         margin-right: 5rem;
+        cursor: pointer;
+        fill: $white;
+    }
+
+    .form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .inputItem {
+        margin-top: 1.2rem;
+
+        &:first-child {
+            margin-top: 0;
+        }
     }
 
 </style>
