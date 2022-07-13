@@ -47,32 +47,12 @@
                     войти
                 </div>
             </div>
-            <div v-else-if="step === 2"
-                 :class="$style.contentRegister"
-            >
-                <form :class="$style.form">
-                    <VInput label="ваше имя"
-                            :value="name"
-                            :class-container="$style.inputItem"
-                            @input="setName"
-                    />
-                    <VInput label="ваше почта"
-                            :value="email"
-                            :class-container="$style.inputItem"
-                            @input="setEmail"
-                    />
-                    <VInput label="ваш пароль"
-                            :value="password"
-                            :class-container="$style.inputItem"
-                            @input="setPassword"
-                    />
-                </form>
-            </div>
-            <div v-else-if="step === 3"
-                 :class="$style.contentRegister"
-            >
-                login
-            </div>
+            <RegistrationForm v-else-if="step === 2"
+                              :class-container="[$style.contentRegister, $style.contentRegister_vertical]"
+            />
+            <LoginForm v-else-if="step === 3"
+                       :class-container="[$style.contentRegister, $style.contentRegister_vertical]"
+            />
         </div>
     </div>
 </template>
@@ -80,7 +60,8 @@
 <script>
 // import ImageLazy from '~/components/common/ImageLazy';
 import Swiper from 'swiper/swiper-bundle.min';
-import VInput from '~/components/input/VInput';
+import RegistrationForm from '~/components/registration/RegistrationForm';
+import LoginForm from '~/components/registration/LoginForm';
 import { addResizeListener, removeResizeListener } from '~/assets/js/utils/resizeUtils';
 
 export default {
@@ -88,7 +69,8 @@ export default {
 
     components: {
         // ImageLazy,
-        VInput,
+        RegistrationForm,
+        LoginForm,
     },
 
     data() {
@@ -118,10 +100,6 @@ export default {
                     src: require('~/static/images/slide3.jpeg'),
                 },
             ],
-
-            name: '',
-            email: '',
-            password: '',
         };
     },
 
@@ -217,19 +195,6 @@ export default {
         // переход на форму входа
         startLogin() {
             this.step = 3;
-        },
-
-        // установка имени
-        setName(e) {
-            this.name = e;
-        },
-
-        setEmail(e) {
-            this.email = e;
-        },
-
-        setPassword(e) {
-            this.password = e;
         },
     },
 };
@@ -327,6 +292,10 @@ export default {
         align-items: center;
         justify-content: space-between;
         padding: 1.2rem 1.3rem;
+
+        &_vertical {
+            flex-direction: column;
+        }
     }
 
     .itemRegister {
@@ -343,10 +312,10 @@ export default {
         position: absolute;
         top: 0;
         left: 50%;
-        transform: translate(-50%, 0);
         width: 1px;
-        background-color: #c6c6c6;
         height: 100%;
+        background-color: #c6c6c6;
+        transform: translate(-50%, 0);
     }
 
     .itemLogin {
@@ -365,22 +334,6 @@ export default {
         margin-right: 5rem;
         cursor: pointer;
         fill: $white;
-    }
-
-    .form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .inputItem {
-        margin-top: 1.2rem;
-
-        &:first-child {
-            margin-top: 0;
-        }
     }
 
 </style>
