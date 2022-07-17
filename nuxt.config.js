@@ -16,15 +16,22 @@ const env = {
 
 const isDev = process.env.NODE_ENV === 'development';
 
+// process.env.PORT и process.env.BASE_URL берутся из файла .env
+
 module.exports = {
+    // Указываем порт, на котором будет работать приложение.
+    server: {
+        port: process.env.PORT,
+        host: 'localhost',
+    },
+
+    env: {
+        baseUrl: process.env.BASE_URL,
+    },
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // MAIN SECTION
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Global environments
-    // env: {
-    //     ...env,
-    // },
+    // mode: 'universal',
 
     ssr: true,
     target: 'server',
@@ -40,10 +47,6 @@ module.exports = {
     //         }
     //         : null,
     // },
-    // Указываем порт, на котором будет работать приложение.
-    serverMiddleware: [
-        { path: '/server', handler: '~/server/index.js' },
-    ],
 
 
     render: {
@@ -83,6 +86,10 @@ module.exports = {
         browserBaseURL: env.CLIENT_API_URL || '',
         credentials: 'include',
     },
+
+    // serverMiddleware: [
+    //     { path: '/server', handler: '~/server/index.js' },
+    // ],
 
     // Global CSS
     css: ['~/assets/scss/vendors.scss', '~/assets/scss/bundle.scss'],
