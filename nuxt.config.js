@@ -1,9 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import nuxtDevConfig from './nuxt.dev.config';
 import nuxtProdConfig from './nuxt.prod.config';
 
-require('dotenv').config();
+// require('dotenv').config();
 
 import headConfig from './config/headConfig';
 import pluginsConfig from './config/pluginsConfig';
@@ -24,21 +22,29 @@ module.exports = {
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Global environments
-    env: {
-        ...env,
-    },
+    // env: {
+    //     ...env,
+    // },
+
+    ssr: true,
+    target: 'server',
 
     // Server settings
-    server: {
-        port: 3000,
-        host: '0.0.0.0',
-        https: env.HTTPS_KEY && env.HTTPS_CERT
-            ? {
-                key: fs.readFileSync(path.resolve(__dirname, env.HTTPS_KEY)),
-                cert: fs.readFileSync(path.resolve(__dirname, env.HTTPS_CERT)),
-            }
-            : null,
-    },
+    // server: {
+    //     port: 3000,
+    //     host: '0.0.0.0',
+    //     https: env.HTTPS_KEY && env.HTTPS_CERT
+    //         ? {
+    //             key: fs.readFileSync(path.resolve(__dirname, env.HTTPS_KEY)),
+    //             cert: fs.readFileSync(path.resolve(__dirname, env.HTTPS_CERT)),
+    //         }
+    //         : null,
+    // },
+    // Указываем порт, на котором будет работать приложение.
+    serverMiddleware: [
+        { path: '/server', handler: '~/server/index.js' },
+    ],
+
 
     render: {
         http2: {

@@ -21,6 +21,7 @@
     "author": "idaproject",
     "license": "ISC",
     "dependencies": {
+        "@csstools/normalize.css": "github:csstools/normalize.css",
         "@nuxtjs/auth": "^4.9.1",
         "@nuxtjs/axios": "^5.9.7",
         "@nuxtjs/dotenv": "^1.4.1",
@@ -28,6 +29,8 @@
         "@nuxtjs/sentry": "^4.5.0",
         "@nuxtjs/style-resources": "^1.0.0",
         "@nuxtjs/svg-sprite": "^0.5.1",
+        "cross-env": "^7.0.3",
+        "express": "^4.18.1",
         "normalize.css": "^8.0.1",
         "nuxt": "^2.15.8",
         "nuxt-polyfill": "^1.0.3",
@@ -42,6 +45,8 @@
         "eslint": "^8.14.0",
         "eslint-plugin-vue": "^8.7.1",
         "nano-staged": "^0.5.0",
+        "nodemon": "^2.0.19",
+        "resize-observer-polyfill": "^1.5.1",
         "sass": "^1.51.0",
         "sass-loader": "10.1.1",
         "simple-git-hooks": "^2.7.0",
@@ -50,7 +55,6 @@
         "stylelint-config-standard": "^20.0.0",
         "stylelint-order": "^4.1.0",
         "stylelint-scss": "^3.18.0",
-        "stylelint-webpack-plugin": "^2.1.1",
-        "resize-observer-polyfill": "^1.5.1"
+        "stylelint-webpack-plugin": "^2.1.1"
     }
 }
