@@ -15,12 +15,13 @@ mongoose.connect(`mongodb://localhost/${process.env.DATABASE}`, {
 });
 
 // Подключаем маршруты для управления моделью Page.
-app.get('/server', function(req, res) {
-    res.status(200).json({
-        test: 'test',
-    });
-});
+// импорт роутов
+const authorizationRouter = require('./authorizationRouter');
+const chatRouter = require('./chatRouter');
+app.use('/authorization', authorizationRouter);
+app.use('/chat', chatRouter);
 
+// тут начинается магия работы сервера
 const { loadNuxt, build } = require('nuxt');
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -36,5 +37,10 @@ async function start() {
     console.log('start server rihard xxx');
 }
 
-// Запуск приложения.
-start();
+
+mongoose.connection.on('connected', () => {
+    // запуск сервера после подключения к БД
+    // при билде обязательно сменить путь в файле вендорс файлу normalize.css
+    // Запуск приложения.
+    start();
+});
