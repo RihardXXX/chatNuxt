@@ -4,7 +4,7 @@
               @submit.prevent="setRegistration"
         >
             <VInput label="ваше имя"
-                    :value="name"
+                    :value="username"
                     :class-container="$style.inputItem"
                     @input="setName"
             />
@@ -32,6 +32,7 @@
 import VInput from '~/components/ui/input/VInput';
 import VButton from '~/components/ui/button/VButton';
 import VErrorList from '~/components/ui/error/VErrorList';
+import moduleApi from '~/config/api/module';
 
 export default {
     name: 'RegistrationForm',
@@ -67,7 +68,7 @@ export default {
                 },
             ],
 
-            name: '',
+            username: '',
             email: '',
             password: '',
         };
@@ -76,7 +77,7 @@ export default {
     methods: {
         // установка имени
         setName(e) {
-            this.name = e;
+            this.username = e;
         },
 
         setEmail(e) {
@@ -88,7 +89,19 @@ export default {
         },
 
         setRegistration() {
-            console.log('setRegistration');
+            const url = moduleApi.authorization.registration;
+
+            this.$axios.post(url, {
+                user: {
+                    username: this.username,
+                    email: this.email,
+                    password: this.password,
+                },
+            })
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(err => console.log(err.response));
         },
 
     },
