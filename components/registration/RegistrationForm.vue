@@ -22,13 +22,15 @@
                      name="регистрация"
             />
         </form>
-        <VErrorList :error-list="errors"
+        <VErrorList v-if="errors.length"
+                    :error-list="errors"
                     :class-container="$style.buttonRegister"
         />
     </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import VInput from '~/components/ui/input/VInput';
 import VButton from '~/components/ui/button/VButton';
 import VErrorList from '~/components/ui/error/VErrorList';
@@ -53,20 +55,7 @@ export default {
 
     data() {
         return {
-            errors: [
-                {
-                    id: 0,
-                    name: 'is name have base',
-                },
-                {
-                    id: 1,
-                    name: 'name length is big 10 characters',
-                },
-                {
-                    id: 3,
-                    name: 'password is not valid',
-                },
-            ],
+            errors: [],
 
             username: '',
             email: '',
@@ -75,6 +64,10 @@ export default {
     },
 
     methods: {
+        ...mapActions('authorization', [
+            'registerUser',
+        ]),
+
         // установка имени
         setName(e) {
             this.username = e;
@@ -89,6 +82,7 @@ export default {
         },
 
         setRegistration() {
+            this.errors = [];
             const url = moduleApi.authorization.registration;
 
             this.$axios.post(url, {
@@ -98,10 +92,10 @@ export default {
                     password: this.password,
                 },
             })
-                .then(response => {
-                    console.log(response);
+                .then(({ data }) => {
+                    this.registerUser(data.user);
                 })
-                .catch(err => console.log(err.response));
+                .catch(err => this.errors = err.response.data.message);
         },
 
     },

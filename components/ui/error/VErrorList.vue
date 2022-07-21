@@ -2,12 +2,12 @@
     <ul v-if="errorList.length"
         :class="[$style.container, classContainer]"
     >
-        <li v-for="error in errorList"
-            :key="error.id"
+        <li v-for="(error, i) in errorList"
+            :key="i"
             :class="$style.item"
         >
             <span>
-                {{ error.name }}
+                {{ error }}
             </span>
         </li>
     </ul>
@@ -51,12 +51,18 @@ export default {
 
     .item {
         margin-top: .3rem;
+        padding: .5rem;
+        border-bottom: 1px solid $gray-100;
         list-style: none;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: $red-100;
 
         &:first-child {
             margin-top: 0;
+        }
+
+        &:last-child {
+            border-bottom: 0;
         }
     }
 

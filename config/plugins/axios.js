@@ -13,6 +13,14 @@ export default ({ $config, $axios, req }) => {
     $axios.onRequest(config => {
         config.paramsSerializer = params => qs.stringify(Object.fromEntries(Object.entries(params).filter(p => p[1] !== null)), { arrayFormat: 'repeat' });
 
+        if (window) {
+            const token = window.localStorage.getItem('token') // получаем токен из локалсториджа
+            const authorizationToken = token ? `token ${token}` : '' // формируем токен в виде строки
+            if(authorizationToken) {
+                config.headers.Authorization = authorizationToken // положили в хедеры токен
+            }
+        }
+
         return config;
     });
 };

@@ -13,13 +13,25 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import TheModal from '@/components/default/TheModal';
 // import TheHeader from '~/components/default/TheHeader';
 export default {
     name: 'Default',
+
     components: {
         TheModal,
         // TheHeader,
+    },
+
+    mounted() {
+        this.authUser();
+    },
+
+    methods: {
+        ...mapActions('authorization', [
+            'authUser',
+        ]),
     },
 };
 </script>

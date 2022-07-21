@@ -1,10 +1,8 @@
 const jwt = require('jsonwebtoken');
-const sign = jwt;
-// import { sign } from 'jsonwebtoken';
 const JWT_SECRET = require('./config');
 
 function generateJWT(user) {
-    return sign({
+    return jwt.sign({
         id: user.id,
         username: user.username,
         email: user.email,
@@ -13,11 +11,10 @@ function generateJWT(user) {
 
 function normalizeResponse(user) {
     delete user.password;
+    // console.log(222, user);
     return {
-        user: {
-            ...user,
-            token: generateJWT(user),
-        },
+        ...user,
+        token: generateJWT(user),
     };
 }
 
