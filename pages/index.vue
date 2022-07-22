@@ -1,105 +1,59 @@
 <template>
     <div :class="$style.IndexPage">
-        <div :class="$style.swiper">
-            <div ref="slider"
-                 class="swiper"
-            >
-                <div class="swiper-wrapper">
-                    <div v-for="slide in slides"
-                         :key="slide.id"
-                         :class="$style.slide"
-                         class="swiper-slide"
-                    >
-                        <div ref="image" :class="$style.image">
-                            <!--                            1112-->
-                            <img :src="slide.src" :class="$style.img" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div :class="$style.registerSection">
-            <div :class="[$style.headerRegister, {
-                [$style.headerRegister_active]: step !== 1
-            }]"
-            >
-                <svg-icon v-if="step !== 1"
-                          name="left-arrow"
-                          :class="$style.iconBack"
-                          @click="step = 1"
-                />
-                <h2 :class="$style.titleRegister">
-                    {{ titleForm }}
-                </h2>
-            </div>
-            <div v-if="step === 1"
-                 :class="$style.contentRegister"
-            >
-                <div :class="$style.itemRegister"
-                     @click="startRegister"
+        <Welcome v-if="!isLoggedIn" />
+        <div v-else
+             :class="$style.container"
+        >
+            <div :class="$style.chatWindow">
+                <div v-for="item in list"
+                     :key="item.id"
+                     :ref="item.name"
+                     :class="$style.item"
                 >
-                    регистрация
-                </div>
-                <div :class="$style.border"></div>
-                <div :class="$style.itemLogin"
-                     @click="startLogin"
-                >
-                    войти
+                    <span :class="$style.username">
+                        {{ item.id }}:
+                    </span>
+                    <span :class="$style.userMessage">
+                        {{ item.title }}
+                    </span>
+                    <!--                    {{ item.title }}-->
                 </div>
             </div>
-            <RegistrationForm v-else-if="step === 2"
-                              :class-container="[$style.contentRegister, $style.contentRegister_vertical]"
-            />
-            <LoginForm v-else-if="step === 3"
-                       :class-container="[$style.contentRegister, $style.contentRegister_vertical]"
-            />
+            <div :class="$style.inputSection">
+                <button @click="stop">
+                    stop
+                </button>
+                <button @click="start">
+                    start
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-// import ImageLazy from '~/components/common/ImageLazy';
-import Swiper from 'swiper/swiper-bundle.min';
-import RegistrationForm from '~/components/registration/RegistrationForm';
-import LoginForm from '~/components/registration/LoginForm';
-import { addResizeListener, removeResizeListener } from '~/assets/js/utils/resizeUtils';
+import { mapState } from 'vuex';
+import Welcome from '~/components/welcome/Welcome';
 
 export default {
     name: 'IndexPage',
 
     components: {
-        // ImageLazy,
-        RegistrationForm,
-        LoginForm,
+        Welcome,
     },
 
     data() {
         return {
-
-            step: 1,
-
-            options: {
-                slidesPerView: 3,
-                loop: true,
-            },
-
-            slides: [
+            list: [
                 {
                     id: 0,
-                    src: '/images/slide1.jpeg',
-                    // src: require('~/static/images/slide1.jpeg'),
-                },
-                {
-                    id: 1,
-                    // src: '~/static/images/slide2.jpeg',
-                    src: require('~/static/images/slide2.jpeg'),
-                },
-                {
-                    id: 2,
-                    // src: '~/static/images/slide3.jpeg',
-                    src: require('~/static/images/slide3.jpeg'),
+                    title: 'test',
                 },
             ],
+
+            interval: null,
+
+            id: 1,
         };
     },
 
@@ -118,83 +72,44 @@ export default {
     },
 
     computed: {
-        titleForm() {
-            switch (this.step) {
-                case 1:
-                    return 'начало';
-                case 2:
-                    return 'регистрация';
-                case 3:
-                    return 'войти';
-                default:
-                    return 'начало';
+        ...mapState('authorization', [
+            'isLoggedIn',
+        ]),
+    },
+
+    watch: {
+        // отрезаем список если число сообщений больше 200
+        list(list) {
+            // console.log(112, list.length);
+            if (list.length > 100) {
+                this.list = this.list.slice(50);
             }
         },
-    },
-
-    mounted() {
-        addResizeListener(this.$refs.slider, this.update);
-    },
-
-    beforeDestroy() {
-        removeResizeListener(this.$refs.slider, this.update);
-        this.slider?.destroy();
     },
 
     methods: {
-        initSwiper() {
-            const options = {
-                slidesPerView: 1,
-                preventInteractionOnTransition: true,
-                loop: true,
-                effect: 'creative',
-                speed: 2000,
-                autoplay: {
-                    delay: 4000,
-                },
-
-                creativeEffect: {
-                    prev: {
-                        shadow: false,
-                        translate: ['-50%', 0, -1],
-                    },
-
-                    next: {
-                        translate: ['100%', 0, 0],
-                    },
-                },
-
-                navigation: {
-                    nextEl: this.$refs.next || false,
-                    prevEl: this.$refs.prev || false,
-                    disabledClass: 'is-disabled',
-                },
+        createItem() {
+            this.id += 1;
+            const newItem = {
+                id: this.id,
+                name: `name${this.id}`,
+                title: 'test'.repeat(this.id),
             };
-
-            if (this.$refs?.slider) {
-                this.slider = new Swiper(this.$refs?.slider, options);
-
-                this.slider.on('slideChange', () => {
-                    this.currentSlide = this.slider.realIndex;
-                });
-            }
+            this.list.push(newItem);
+            // console.log(newItem.name);
+            const str = newItem.name;
+            setTimeout(() => {
+                const element = this.$refs[str][0];
+                element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 300);
         },
 
-        update() {
-            this.slider?.destroy();
-            this.$nextTick(() => {
-                this.initSwiper();
-            });
+        stop() {
+            clearInterval(this.interval);
         },
 
-        // переход на форму регистрации
-        startRegister() {
-            this.step = 2;
-        },
-
-        // переход на форму входа
-        startLogin() {
-            this.step = 3;
+        start() {
+            this.interval = setInterval(() => this.createItem(), 200);
         },
     },
 };
@@ -202,138 +117,52 @@ export default {
 
 <style lang="scss" module>
     .IndexPage {
-        overflow: hidden;
-        width: 100%;
-        height: 100vh;
-    }
-
-    .swiper {
         width: 100%;
         height: 100%;
     }
 
-    .slide {
-        position: relative;
-        width: 100%;
-        height: 78rem;
-
-        &:after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(75deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, 0) 50.99%, rgba(217, 217, 217, 0) 50.99%);
-        }
-
-        @include respond-to(tablet) {
-            height: 52.6rem;
-        }
-
-        @include respond-to(mobile) {
-            height: 46.6rem;
-        }
-    }
-
-    .image {
-        position: relative;
+    .container {
         width: 100%;
         height: 100%;
-        //display: flex;
     }
 
-    .img {
-        height: 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-    }
-
-    .registerSection {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        z-index: 100;
-        overflow: hidden;
-        min-width: 30rem;
-        border-radius: 1.2rem;
-        background-color: $white;
-        transform: translate(-50%, -50%);
-    }
-
-    .headerRegister {
+    .chatWindow {
+        overflow: auto;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.3rem 1.1rem;
-        background-color: $black-bg;
-
-        &_active {
-            justify-content: flex-start;
-
-            .iconBack {
-                margin-right: 10rem;
-            }
-        }
+        width: 100%;
+        height: 90%;
+        flex-direction: column;
     }
 
-    .titleRegister {
-        text-align: center;
-        font-size: 1.6rem;
-        font-weight: 600;
-        //line-height: 2rem;
-        color: $white;
+    .item {
+        display: inline-block;
+        align-items: flex-start;
+        justify-content: flex-start;
+        //width: 100%;
+        //min-height: 3rem;
+        margin: .5rem;
+        padding: .5rem;
+        border-radius: .5rem;
+        border: 1px solid $gray-600;
+        word-wrap: break-word;
+        flex-direction: column;
     }
 
-    .contentRegister {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.2rem 1.3rem;
-
-        &_vertical {
-            flex-direction: column;
-        }
-    }
-
-    .itemRegister {
-        width: 50%;
-        //padding: 1rem 2rem;
-        text-align: center;
-        font-size: 1.8rem;
+    .username {
+        font-size: 1.2rem;
         font-weight: 500;
-        color: $green-main;
-        cursor: pointer;
+        color: $black-600;
     }
 
-    .border {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: 1px;
-        height: 100%;
-        background-color: #c6c6c6;
-        transform: translate(-50%, 0);
+    .userMessage {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: $black-100;
     }
 
-    .itemLogin {
-        width: 50%;
-        //padding: 1rem 2rem;
-        text-align: center;
-        font-size: 1.8rem;
-        font-weight: 500;
-        color: $blue-main;
-        cursor: pointer;
-    }
-
-    .iconBack {
-        width: 1.6rem;
-        height: 1.6rem;
-        margin-right: 5rem;
-        cursor: pointer;
-        fill: $white;
+    .inputSection {
+        width: 100%;
+        height: 10%;
     }
 
 </style>

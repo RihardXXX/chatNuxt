@@ -29,10 +29,24 @@ authorizationRouter.post('/registration', function(req, res) {
 });
 
 // logIn user
-authorizationRouter.get('/logIn', function(req, res) {
-    res.json({
-        logIn: 'logIn',
-    });
+authorizationRouter.post('/logIn', async function(req, res) {
+    const { email, password } = req.body.user;
+
+    try {
+        // проверка что такая почта существует
+        const isUser = await User.findOne({ email }).exec();
+        if (!isUser) {
+            return res.status(500).json({ message: ['такой почты не существует'] });
+        }
+        // если пароль с бд не совпадает с пароллем в запросе
+        if (isUser.password !== password) {
+            return res.status(500).json({ message: ['пароль указан неверный'] });
+        }
+        // если все совпадает возвращаем пользователя
+        return res.status(200).json({ user: normalizeResponse(isUser.toObject()) });
+    } catch (err) {
+        return res.status(500).json({ message: err });
+    }
 });
 
 // logOut user

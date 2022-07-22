@@ -1,4 +1,5 @@
 import moduleApi from '~/config/api/module';
+
 export const state = () => ({
     user: {},
     token: '',
@@ -41,5 +42,25 @@ export const actions = {
                 commit('setToken', token);
             })
             .catch(err => console.log(err.response.data.message));
+    },
+    // метод который помогает разлогинится пользователю
+    logout({ commit }) {
+        console.log('logout');
+        window.localStorage.removeItem('token');
+        commit('setUser', {});
+        commit('setIsLoggedIn', false);
+        commit('setToken', '');
+    },
+    // авторизоваться в вручную по логину и паролю
+    login({ commit }, user) {
+        return new Promise((resolve, reject) => {
+            // console.log('login action');
+            // console.log('user: ', user);
+            commit('setUser', user);
+            commit('setIsLoggedIn', true);
+            window.localStorage.setItem('token', user.token);
+            commit('setToken', user.token);
+            resolve();
+        });
     },
 };

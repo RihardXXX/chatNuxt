@@ -3,25 +3,30 @@
 
         <TheModal :class="$style.modal" />
 
-        <!--        <TheHeader />-->
-
         <main :class="$style.page">
             <Nuxt />
         </main>
 
+        <TheHeader v-if="isLoggedIn" />
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import TheModal from '@/components/default/TheModal';
-// import TheHeader from '~/components/default/TheHeader';
+import TheHeader from '~/components/default/TheHeader';
 export default {
     name: 'Default',
 
     components: {
         TheModal,
-        // TheHeader,
+        TheHeader,
+    },
+
+    computed: {
+        ...mapState('authorization', [
+            'isLoggedIn',
+        ]),
     },
 
     mounted() {
@@ -38,13 +43,14 @@ export default {
 
 <style lang="scss" module>
     .DefaultLayout {
+        overflow: hidden;
         width: 100%;
         height: 100%;
     }
 
     .page {
         width: 100%;
-        height: 100%;
+        height: 80vh;
     }
 
     .modal {

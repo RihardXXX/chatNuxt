@@ -70,15 +70,15 @@ export default {
 
         // установка имени
         setName(e) {
-            this.username = e;
+            this.username = e.trim();
         },
 
         setEmail(e) {
-            this.email = e;
+            this.email = e.trim();
         },
 
         setPassword(e) {
-            this.password = e;
+            this.password = e.trim();
         },
 
         setRegistration() {

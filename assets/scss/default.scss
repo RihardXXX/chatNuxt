@@ -13,6 +13,7 @@ html,
 body,
 #__nuxt,
 #__layout {
+    overflow: hidden;
     width: 100%;
     height: 100%;
 }

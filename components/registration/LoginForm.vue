@@ -17,16 +17,19 @@
                      name="войти"
             />
         </form>
-        <VErrorList :error-list="errors"
+        <VErrorList v-if="errors.length"
+                    :error-list="errors"
                     :class-container="$style.buttonRegister"
         />
     </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import VInput from '~/components/ui/input/VInput';
 import VButton from '~/components/ui/button/VButton';
 import VErrorList from '~/components/ui/error/VErrorList';
+import moduleApi from '~/config/api/module';
 
 export default {
     name: 'LoginForm',
@@ -47,20 +50,7 @@ export default {
 
     data() {
         return {
-            errors: [
-                {
-                    id: 0,
-                    name: 'is name have base',
-                },
-                {
-                    id: 1,
-                    name: 'name length is big 10 characters',
-                },
-                {
-                    id: 3,
-                    name: 'password is not valid',
-                },
-            ],
+            errors: [],
 
             email: '',
             password: '',
@@ -68,21 +58,33 @@ export default {
     },
 
     methods: {
-        // установка имени
-        setName(e) {
-            this.name = e;
-        },
+        ...mapActions('authorization', [
+            'login',
+        ]),
 
         setEmail(e) {
-            this.email = e;
+            this.email = e.trim();
         },
 
         setPassword(e) {
-            this.password = e;
+            this.password = e.trim();
         },
 
         setLogin() {
+            this.errors = [];
             console.log('setLogin');
+            const url = moduleApi.authorization.login;
+
+            this.$axios.post(url, {
+                user: {
+                    email: this.email,
+                    password: this.password,
+                },
+            })
+                .then(({ data }) => {
+                    this.login(data.user);
+                })
+                .catch(err => this.errors = err.response.data.message);
         },
 
     },
