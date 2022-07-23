@@ -1,5 +1,12 @@
 <template>
     <header :class="$style.headerMain">
+        <div :class="$style.rooms"
+             @click="selectRooms"
+        >
+            <svg-icon name="rooms"
+                      :class="$style.exitIcon"
+            />
+        </div>
         <div :class="$style.person">
             <div :class="$style.borderLogo">
                 <img src="/images/avatar1.png"
@@ -44,6 +51,11 @@ export default {
         // разлогинится
         exitLogin() {
             this.logout();
+        },
+
+        // выбрать комнату
+        selectRooms() {
+            console.log('selectRooms');
         },
     },
 };
@@ -108,6 +120,21 @@ export default {
         font-size: 1.15rem;
         font-weight: 400;
         transform: translateX(-50%);
+    }
+
+    .rooms {
+        position: relative;
+        height: 100%;
+
+        &:before {
+            content: "комнаты";
+            position: absolute;
+            top: -1.5rem;
+            right: 0;
+            z-index: 112;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
     }
 
     .exit {

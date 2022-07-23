@@ -2,7 +2,9 @@ require('dotenv').config();
 
 // Подключаем бэкенд на Express.
 const express = require('express');
-const app = express();
+// const app = express();
+const { app, server } = require('./chat');
+
 app.use(express.json());
 
 // Подключаем Mongoose и делаем коннект к базе данных.
@@ -17,12 +19,11 @@ mongoose.connect(`mongodb://localhost/${process.env.DATABASE}`, {
 // Подключаем маршруты для управления моделью Page.
 // импорт роутов
 const authorizationRouter = require('./authorizationRouter');
-const chatRouter = require('./chatRouter');
 app.use('/authorization', authorizationRouter);
-app.use('/chat', chatRouter);
 
 // тут начинается магия работы сервера
 const { loadNuxt, build } = require('nuxt');
+const consola = require('consola');
 const isDev = process.env.NODE_ENV !== 'production';
 
 async function start() {
@@ -33,8 +34,14 @@ async function start() {
     if (isDev) {
         build(nuxt);
     }
-    app.listen(process.env.PORT);
+    // app.listen(process.env.PORT);
     console.log('start server rihard xxx');
+    server.listen(process.env.PORT, () => {
+        consola.ready({
+            message: 'Server listening on http://${host}:${port}',
+            badge: true,
+        });
+    });
 }
 
 
