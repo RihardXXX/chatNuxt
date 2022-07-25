@@ -10,17 +10,27 @@ const createMessage = (text, username, id = uuidv4()) => ({ text, username, id, 
 io.on('connection', socket => {
     // console.log('socket server start connection');
     // принимаем новое сообщение от клиента
-    socket.on('createNewMessage', message => {
-        console.log('server work: ', message);
-        // вызываем экшин на клиенте добавляя сообщение
-        socket.emit('addMessageFromServer', message);
+    socket.on('createNewMessage', ({ text, room, username }, cb) => {
+        // цепляемся в определенной комнате
+        socket.join(room);
+        const newMessage = createMessage(text, username);
+        io.to(room).emit('addMessageFromServer', newMessage);
+        cb(newMessage);
     });
 
 
-    // создаем комнаты и подключаем пользователей
-    socket.on('joinedRooms', user => {
-        // console.log(112, user);
-        socket.emit('addMessageFromServer', createMessage(`привет пользователь ${user.username}`, 'admin'));
+    // подключение к комнате
+    socket.on('joinedRooms', ({ user, room }, cb) => {
+        // цепляемся в определенной комнате
+        socket.join(room);
+
+        const username = user.username;
+
+        socket.emit('addMessageFromServer', createMessage(`привет пользователь ${username}`, 'admin'));
+        // то что будем транслироваться для других участников
+        socket.broadcast
+            .to(room)
+            .emit('addMessageFromServer', createMessage(`Пользователь ${username} присоединился к чату`, 'admin'));
     });
 });
 

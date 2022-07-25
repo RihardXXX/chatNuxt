@@ -56,6 +56,7 @@ export default {
         // выбрать комнату
         selectRooms() {
             console.log('selectRooms');
+            this.$router.push('/');
         },
     },
 };

@@ -15,29 +15,31 @@
                     <div v-for="item in messages"
                          :key="item.id"
                          :ref="item.name"
-                         :class="$style.item"
+                         :class="$style.itemContainer"
                     >
-                        <span :class="$style.username">
-                            {{ item.username }}:
-                        </span>
-                        <span :class="$style.userMessage">
-                            {{ item.text }}
-                        </span>
-                        <!--                    {{ item.title }}-->
+                        <div :class="$style.item">
+                            <span :class="$style.username">
+                                {{ item.username }}:
+                            </span>
+                            <span :class="$style.userMessage">
+                                {{ item.text }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div :class="$style.userName">
+                    <h3 :class="$style.titleRoom">пользователи:</h3>
+                    <div v-for="room in rooms"
+                         :key="room.id"
+                         :class="[$style.item, $style._room]"
+                    >
+                        {{ room.title }}
                     </div>
                 </div>
             </div>
             <div :class="$style.inputSection">
-                <!--                <div :class="$style.run">-->
-                <!--                    <button @click="stop">-->
-                <!--                        stop-->
-                <!--                    </button>-->
-                <!--                    <button @click="start">-->
-                <!--                        start-->
-                <!--                    </button>-->
-                <!--                </div>-->
                 <div :class="$style.sendSection">
-                    <input v-model.trim="message"
+                    <input v-model.trim="text"
                            :class="$style.inputMessage"
                            @keyup.enter="sendMessage"
                     />
@@ -83,7 +85,10 @@ export default {
 
             id: 1,
 
-            message: '',
+            text: '',
+
+            // текущая комната
+
         };
     },
 
@@ -121,53 +126,28 @@ export default {
     },
 
     mounted() {
-        this.$socket.emit('joinedRooms', this.user);
+        const room = this.$route.params.room;
+        this.$socket.emit('joinedRooms', {
+            user: this.user,
+            room,
+        });
     },
 
 
     methods: {
-        createItem() {
-            this.id += 1;
-            const newItem = {
-                id: this.id,
-                name: `name${this.id}`,
-                title: 'test'.repeat(this.id),
-            };
-            this.list.push(newItem);
-            // console.log(newItem.name);
-            const str = newItem.name;
-            setTimeout(() => {
-                const element = this.$refs[str][0];
-                element.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            }, 300);
-        },
-
-        stop() {
-            clearInterval(this.interval);
-        },
-
-        start() {
-            this.interval = setInterval(() => this.createItem(), 200);
-        },
-
         sendMessage() {
-            this.id += 1;
-            const newItem = {
-                id: this.id,
-                name: `name${this.id}`,
-                title: this.message,
-            };
-            // this.list.push(newItem);
-            // console.log(newItem.name);
-            // отправляем на сервер созданный объект
-            this.$socket.emit('createNewMessage', newItem);
+            if (!this.text.length) {
+                return;
+            }
+            const room = this.$route.params.room;
+            const username = this.user.username;
+            this.$socket.emit('createNewMessage', { text: this.text, room, username }, data => {
+                // тут будем делать скрол как получим ответ от сервера
+                const element = this.$refs[data.name][0];
+                setTimeout(() => element.scrollIntoView({ block: 'center', behavior: 'smooth' }), 1000);
+            });
 
-            const str = newItem.name;
-            setTimeout(() => {
-                const element = this.$refs[str][0];
-                element.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            }, 1000);
-            this.message = '';
+            this.text = '';
         },
     },
 };
@@ -195,9 +175,18 @@ export default {
     .chatRooms {
         overflow: auto;
         display: flex;
-        width: 20%;
+        width: 10%;
         height: 100%;
         border-right: .5px solid $gray-200;
+        flex-direction: column;
+    }
+
+    .userName {
+        overflow: auto;
+        display: flex;
+        width: 10%;
+        height: 100%;
+        border-left: .5px solid $gray-200;
         flex-direction: column;
     }
 
@@ -213,11 +202,15 @@ export default {
         flex-direction: column;
     }
 
+    .itemContainer {
+        width: 100%;
+    }
+
     .item {
         display: inline-block;
         align-items: flex-start;
         justify-content: flex-start;
-        //width: 100%;
+        width: 70%;
         //min-height: 3rem;
         margin: .2rem .5rem;
         padding: .5rem;
