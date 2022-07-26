@@ -5,6 +5,7 @@ const pluginsConfig = [
     '~/config/plugins/modal.js',
     '~/config/plugins/sentry.js',
     { src: '~/config/plugins/socket.client.js', ssr: false },
+    { src: '~/config/plugins/tooltip.js', ssr: false },
     // { src: '~/config/plugins/swiper.js', mode: 'client' },
 ];
 

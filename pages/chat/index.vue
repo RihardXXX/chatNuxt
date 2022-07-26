@@ -12,17 +12,25 @@
                     </div>
                 </div>
                 <div :class="$style.chatContainer">
-                    <div v-for="item in messages"
-                         :key="item.id"
-                         :ref="item.name"
-                         :class="$style.itemContainer"
+                    <div v-for="message in messages"
+                         :key="message.id"
+                         :ref="message.name"
+                         :class="[$style.itemContainer, {
+                             [$style._right]: message.userId === user._id
+                         }]"
                     >
-                        <div :class="$style.item">
+                        <div v-tooltip.bottom-end="{
+                                 content: 'написать этому пользователю',
+                                 // delay: { show: 200, hide: 100 },
+                             }"
+                             :class="$style.item"
+                             @click="() => setName(message.username)"
+                        >
                             <span :class="$style.username">
-                                {{ item.username }}:
+                                {{ message.username }}:
                             </span>
                             <span :class="$style.userMessage">
-                                {{ item.text }}
+                                {{ message.text }}
                             </span>
                         </div>
                     </div>
@@ -39,8 +47,10 @@
             </div>
             <div :class="$style.inputSection">
                 <div :class="$style.sendSection">
-                    <input v-model.trim="text"
+                    <input ref="input"
+                           :value="text"
                            :class="$style.inputMessage"
+                           @input="event => text = event.target.value.trim()"
                            @keyup.enter="sendMessage"
                     />
                     <div :class="$style.sendMessage"
@@ -86,9 +96,6 @@ export default {
             id: 1,
 
             text: '',
-
-            // текущая комната
-
         };
     },
 
@@ -112,7 +119,7 @@ export default {
             'user',
         ]),
 
-        ...mapState(['messages']),
+        ...mapState(['messages', 'currentRoom']),
     },
 
     watch: {
@@ -123,14 +130,31 @@ export default {
                 this.list = this.list.slice(50);
             }
         },
+
+        // тут следим за списком и у определенного списка докручиваем скролл
+        messages(messages) {
+            // если есть список сообщений то доклучиваем скрол к последнему сообщению
+            if (messages.length) {
+                // тут будем делать скрол как получим ответ от сервера
+                const name = messages[messages.length-1].name;
+                setTimeout(() => {
+                    const element = this.$refs[name][0];
+                    element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }, 1000);
+            }
+        },
     },
 
     mounted() {
-        const room = this.$route.params.room;
         this.$socket.emit('joinedRooms', {
             user: this.user,
-            room,
+            room: this.currentRoom,
         });
+    },
+
+    beforeDestroy() {
+        // когда пользователь выходит сообщаем остальным что пользователь вышел
+        this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
     },
 
 
@@ -139,15 +163,20 @@ export default {
             if (!this.text.length) {
                 return;
             }
-            const room = this.$route.params.room;
-            const username = this.user.username;
-            this.$socket.emit('createNewMessage', { text: this.text, room, username }, data => {
+            const user = this.user;
+            this.$socket.emit('createNewMessage', { text: this.text, room: this.currentRoom, user }, data => {
                 // тут будем делать скрол как получим ответ от сервера
                 const element = this.$refs[data.name][0];
                 setTimeout(() => element.scrollIntoView({ block: 'center', behavior: 'smooth' }), 1000);
             });
 
             this.text = '';
+        },
+
+        // кому мы хотим обратится в чате
+        setName(username) {
+            this.text = `@${username} `;
+            this.$refs.input.focus();
         },
     },
 };
@@ -203,10 +232,17 @@ export default {
     }
 
     .itemContainer {
+        display: flex;
+        justify-content: flex-start;
         width: 100%;
+
+        &._right {
+            justify-content: flex-end;
+        }
     }
 
     .item {
+        position: relative;
         display: inline-block;
         align-items: flex-start;
         justify-content: flex-start;
@@ -219,11 +255,18 @@ export default {
         background-color: $white;
         word-wrap: break-word;
         flex-direction: column;
+        cursor: pointer;
 
         &._room {
             border: .5px solid $black-400;
             background-color: $gray-600;
             cursor: pointer;
+        }
+
+        &:hover {
+            .username {
+                font-weight: 800;
+            }
         }
     }
 

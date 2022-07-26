@@ -1,6 +1,7 @@
 export const state = () => ({
     messages: [],
     rooms: [],
+    currentRoom: null,
 });
 
 export const getters = {};
@@ -19,5 +20,8 @@ export const actions = {
 export const mutations = {
     addMessage(state, message) {
         state.messages = [...state.messages, message];
+    },
+    setCurrentRoom(state, currentRoom) {
+        state.currentRoom = currentRoom;
     },
 };

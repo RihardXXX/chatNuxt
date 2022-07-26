@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import Welcome from '~/components/welcome/Welcome';
 
 export default {
@@ -79,10 +79,13 @@ export default {
     },
 
     methods: {
+        ...mapMutations(['setCurrentRoom']),
+
         nextRoom(numberRoom) {
+            // устанавливаем текущую комнату
+            this.setCurrentRoom(numberRoom);
             this.$router.push({
                 name: 'chat',
-                params: { room: numberRoom },
             });
         },
     },
