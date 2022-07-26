@@ -78,6 +78,18 @@ export default {
         ]),
     },
 
+    watch: {
+        isLoggedIn(status, oldStatus) {
+            // как только меняется статус, начинаетм запускать инициализацию комнат
+            console.log('status: ', status);
+            console.log('oldStatus: ', oldStatus);
+            // если авторизация прошла успешно осуществляем вызов инициализации комнат
+            // if (status) {
+            //
+            // }
+        },
+    },
+
     methods: {
         ...mapMutations(['setCurrentRoom']),
 

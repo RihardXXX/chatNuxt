@@ -1,6 +1,9 @@
 export const state = () => ({
     messages: [],
-    rooms: [],
+    rooms: [{
+        id: 0,
+        title: 'russia',
+    }],
     currentRoom: null,
 });
 
@@ -15,6 +18,11 @@ export const actions = {
         // console.log('SOCKET_newMessage: ', data);
         commit('addMessage', message);
     },
+    SOCKET_initialRooms({ commit }, rooms) {
+        // console.log('ctx: ', ctx);
+        // console.log('SOCKET_newMessage: ', data);
+        commit('addMessage', rooms);
+    },
 };
 
 export const mutations = {
@@ -23,5 +31,8 @@ export const mutations = {
     },
     setCurrentRoom(state, currentRoom) {
         state.currentRoom = currentRoom;
+    },
+    setRooms(state, rooms) {
+        state.rooms = [...rooms];
     },
 };

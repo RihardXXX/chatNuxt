@@ -76,20 +76,20 @@ export default {
 
     data() {
         return {
-            rooms: [
-                {
-                    id: 0,
-                    title: 'Moscow',
-                },
-                {
-                    id: 1,
-                    title: 'London',
-                },
-                {
-                    id: 2,
-                    title: 'New York',
-                },
-            ],
+            // rooms: [
+            //     {
+            //         id: 0,
+            //         title: 'Moscow',
+            //     },
+            //     {
+            //         id: 1,
+            //         title: 'London',
+            //     },
+            //     {
+            //         id: 2,
+            //         title: 'New York',
+            //     },
+            // ],
 
             interval: null,
 
@@ -119,7 +119,11 @@ export default {
             'user',
         ]),
 
-        ...mapState(['messages', 'currentRoom']),
+        ...mapState([
+            'messages',
+            'currentRoom',
+            'rooms',
+        ]),
     },
 
     watch: {
