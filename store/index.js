@@ -13,15 +13,23 @@ export const actions = {
     async nuxtServerInit({ state, commit, dispatch }) {
         // Get initial data here
     },
+    // добавления сообщения
     SOCKET_addMessageFromServer({ commit }, message) {
         // console.log('ctx: ', ctx);
         // console.log('SOCKET_newMessage: ', data);
         commit('addMessage', message);
     },
-    SOCKET_initialRooms({ commit }, rooms) {
+    // инициализация комнат
+    SOCKET_initialRoomsClient({ commit }, rooms) {
         // console.log('ctx: ', ctx);
         // console.log('SOCKET_newMessage: ', data);
-        commit('addMessage', rooms);
+        commit('setRooms', rooms);
+    },
+    // добавление новой комнаты
+    SOCKET_createRoom({ commit }, newRoom) {
+        // console.log('ctx: ', ctx);
+        // console.log('SOCKET_newMessage: ', data);
+        commit('addNewRoom', newRoom);
     },
 };
 
@@ -34,5 +42,8 @@ export const mutations = {
     },
     setRooms(state, rooms) {
         state.rooms = [...rooms];
+    },
+    addNewRoom(state, newRoom) {
+        state.rooms = [...state.rooms, newRoom];
     },
 };

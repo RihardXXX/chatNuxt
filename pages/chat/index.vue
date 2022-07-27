@@ -3,12 +3,21 @@
         <div :class="$style.container">
             <div :class="$style.chatWindow">
                 <div :class="$style.chatRooms">
+                    <div :class="[$style.item, $style._room, $style._createRoom]"
+                         @click="createNewRoom"
+                    >
+                        создать комнату
+                    </div>
+                    <div :class="$style.border"></div>
                     <h3 :class="$style.titleRoom">Комнаты:</h3>
                     <div v-for="room in rooms"
                          :key="room.id"
-                         :class="[$style.item, $style._room]"
+                         :class="[$style.item, $style._room, {
+                             [$style._activeRoom]: currentRoom === room.id,
+                         }]"
+                         @click="() => changeRoom(room)"
                     >
-                        {{ room.title }}
+                        {{ room.name }}
                     </div>
                 </div>
                 <div :class="$style.chatContainer">
@@ -67,7 +76,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'ChatRoom',
@@ -163,6 +172,8 @@ export default {
 
 
     methods: {
+        ...mapMutations(['setCurrentRoom']),
+
         sendMessage() {
             if (!this.text.length) {
                 return;
@@ -181,6 +192,27 @@ export default {
         setName(username) {
             this.text = `@${username} `;
             this.$refs.input.focus();
+        },
+
+        // сменить комнату
+        changeRoom(room) {
+            // console.log(room);
+            // выход из комнаты старой
+            // когда пользователь выходит сообщаем остальным что пользователь вышел
+            this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
+
+            // вход в новую комнату
+            this.setCurrentRoom(room.id);
+            this.$socket.emit('joinedRooms', {
+                user: this.user,
+                room: room.id,
+            });
+        },
+
+        // создать новую комнату для общения
+        createNewRoom() {
+            console.log('create new room');
+            this.$socket.emit('createNewRoom');
         },
     },
 };
@@ -264,7 +296,17 @@ export default {
         &._room {
             border: .5px solid $black-400;
             background-color: $gray-600;
+            transition: .4s;
             cursor: pointer;
+
+            &:hover {
+                background-color: $gray-400;
+            }
+        }
+
+        &._activeRoom {
+            background-color: $blue-100;
+            color: $white;
         }
 
         &:hover {
@@ -272,6 +314,13 @@ export default {
                 font-weight: 800;
             }
         }
+    }
+
+    .border {
+        width: 100%;
+        height: 1px;
+        margin-top: .5rem;
+        background-color: $gray-200;
     }
 
     .username {

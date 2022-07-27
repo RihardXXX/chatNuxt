@@ -10,25 +10,19 @@
                               :class="$style.chatsIcon"
                     />
                 </div>
-                <ul :class="$style.roomsList">
-                    <li :class="$style.itemRoom"
-                        @click="() => nextRoom(1)"
+                <ul v-if="rooms.length"
+                    :class="$style.roomsList"
+                >
+                    <li v-for="room in rooms"
+                        :key="room.id"
+                        :class="$style.itemRoom"
+                        @click="() => nextRoom(room.id)"
                     >
                         <svg-icon name="room"
                                   :class="$style.roomIcon"
                         />
                         <div :class="$style.linkItem">
-                            перейти в 1 комнату для общения
-                        </div>
-                    </li>
-                    <li :class="$style.itemRoom"
-                        @click="() => nextRoom(2)"
-                    >
-                        <svg-icon name="room"
-                                  :class="$style.roomIcon"
-                        />
-                        <div :class="$style.linkItem">
-                            перейти в 2 комнату для общения
+                            {{ room.name }}
                         </div>
                     </li>
                 </ul>
@@ -76,6 +70,10 @@ export default {
         ...mapState('authorization', [
             'isLoggedIn',
         ]),
+
+        ...mapState([
+            'rooms',
+        ]),
     },
 
     watch: {
@@ -84,9 +82,9 @@ export default {
             console.log('status: ', status);
             console.log('oldStatus: ', oldStatus);
             // если авторизация прошла успешно осуществляем вызов инициализации комнат
-            // if (status) {
-            //
-            // }
+            if (status) {
+                this.$socket.emit('initialRooms');
+            }
         },
     },
 
@@ -137,7 +135,9 @@ export default {
     }
 
     .roomsList {
+        overflow: auto;
         width: 100%;
+        height: 88%;
         list-style: none;
     }
 
