@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-const UserSchema = new mongoose.Schema({
+// модель пользователя
+const user = new mongoose.Schema({
     username: {
         type: String,
         lowercase: true,
@@ -22,8 +23,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'пароль является обязательным полем для заполнения'],
     },
+    is_active: { type: Boolean, default: false },
 }, { timestamps: true });
 
-UserSchema.plugin(uniqueValidator, { message: 'такое имя или электронная почта уже существует' });
+user.plugin(uniqueValidator, { message: 'такое имя или электронная почта уже существует' });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', user);

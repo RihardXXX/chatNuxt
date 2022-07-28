@@ -5,6 +5,7 @@ const io = require('socket.io')(server, {
 });
 const { v4: uuidv4 } = require('uuid');
 
+// количество комнат
 const rooms = [
     {
         id: 0,
@@ -50,6 +51,10 @@ io.on('connection', socket => {
         socket.broadcast
             .to(room)
             .emit('addMessageFromServer', createMessage(`Пользователь ${username} присоединился к чату`, 'admin'));
+
+        // добавляем участника в комнату на сервере и клиенте
+        // addUser(user);
+        // socket.emit('setUsersCurrentRoomStart', usersCurrentRoom);
     });
 
     // пользователь вышел из комнаты

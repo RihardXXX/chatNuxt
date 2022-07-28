@@ -46,11 +46,11 @@
                 </div>
                 <div :class="$style.userName">
                     <h3 :class="$style.titleRoom">пользователи:</h3>
-                    <div v-for="room in rooms"
-                         :key="room.id"
+                    <div v-for="user in usersCurrentRoom"
+                         :key="user.id"
                          :class="[$style.item, $style._room]"
                     >
-                        {{ room.title }}
+                        {{ user.username }}
                     </div>
                 </div>
             </div>
@@ -132,6 +132,7 @@ export default {
             'messages',
             'currentRoom',
             'rooms',
+            'usersCurrentRoom',
         ]),
     },
 
@@ -172,7 +173,10 @@ export default {
 
 
     methods: {
-        ...mapMutations(['setCurrentRoom']),
+        ...mapMutations([
+            'setCurrentRoom',
+            'deleteMessages',
+        ]),
 
         sendMessage() {
             if (!this.text.length) {
@@ -198,6 +202,8 @@ export default {
         changeRoom(room) {
             // console.log(room);
             // выход из комнаты старой
+            // при смене комнаты очищаем сообщения в чате текущем
+            this.deleteMessages();
             // когда пользователь выходит сообщаем остальным что пользователь вышел
             this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
 
