@@ -4,25 +4,46 @@ const io = require('socket.io')(server, {
     allowEIO3: true, // false by default
 });
 const { v4: uuidv4 } = require('uuid');
+const Room = require('./models/room');
+// const normalizeResponse = require('~/server/helpers');
+// const User = require('~/server/models/user');
+// const Message = require('~/server/models/message');
 
-// количество комнат
-const rooms = [
-    {
-        id: 0,
-        name: 'russia',
-    },
-    {
-        id: 1,
-        name: 'usa',
-    },
-];
+const rooms = [];
+
 
 const createMessage = (text, username, userId, id = uuidv4()) => ({ text, username, userId, id, name: `name${id}` });
 
 io.on('connection', socket => {
     // инициализация комнат для общения
-    socket.on('initialRooms', () => {
-        socket.emit('initialRoomsClient', rooms);
+    socket.on('initialRooms', async ({ user }, cb) => {
+        // socket.emit('initialRoomsClient', rooms);
+        // если нет в БД общей комнаты то создаем её
+        const room = await Room.findOne({ name: 'общая' }).exec();
+        // const room = await Room.exists({ name: /общая/i });
+        console.log(room);
+        if (!room) {
+            console.log('user', user);
+
+            const newRoom = new Room({
+                name: 'общая',
+                topic: 'теги',
+                users: [user],
+                messages: [],
+            });
+
+            console.log('newRoom', newRoom);
+            newRoom.save(function(err, doc, next) {
+                if (err) {
+                    const errorsList = Object.values(err.errors).map(item => item.properties.message);
+                    socket.emit('setError', errorsList);
+                } else {
+                    socket.emit('initialRoomsClient', [room]);
+                }
+            });
+        } else {
+            socket.emit('initialRoomsClient', [room]);
+        }
     });
 
     // console.log('socket server start connection');

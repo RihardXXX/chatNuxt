@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-const Room = require('./room');
-const User = require('./user');
+// const Room = require('./room');
+// const User = require('./user');
 
 // Модель сообщений
 const message = new mongoose.Schema({
-    room: Room,
-    user: User,
+    room: { type: Object, default: {} },
+    user: { type: Object, default: {} },
     message_body: String,
     message_status: { type: Boolean, default: false },
     created_at: { type: Date, default: Date.now },

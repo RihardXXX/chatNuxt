@@ -69,6 +69,7 @@ export default {
     computed: {
         ...mapState('authorization', [
             'isLoggedIn',
+            'user',
         ]),
 
         ...mapState([
@@ -83,7 +84,7 @@ export default {
             console.log('oldStatus: ', oldStatus);
             // если авторизация прошла успешно осуществляем вызов инициализации комнат
             if (status) {
-                this.$socket.emit('initialRooms');
+                this.$socket.emit('initialRooms', { user: this.user });
             }
         },
     },

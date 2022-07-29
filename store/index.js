@@ -10,6 +10,8 @@ export const state = () => ({
     currentRoom: null,
     // количество пользователей в текущей комнате
     usersCurrentRoom: [],
+    // массив ошибок
+    errors: null,
 });
 
 export const getters = {};
@@ -42,6 +44,12 @@ export const actions = {
         // console.log('SOCKET_newMessage: ', data);
         commit('setUsersCurrentRoom', users);
     },
+    // инициализация массива ошибок
+    SOCKET_setError({ commit }, errors) {
+        // console.log('ctx: ', ctx);
+        // console.log('SOCKET_newMessage: ', data);
+        commit('setErrorStart', errors);
+    },
 };
 
 export const mutations = {
@@ -68,5 +76,9 @@ export const mutations = {
     // инициализируем количество пользоваталей в текущей комнате
     setUsersCurrentRoom(state, users) {
         state.usersCurrentRoom = [...users];
+    },
+    // инициализация ошибок
+    setErrorStart(state, errors) {
+        state.errors = [...errors];
     },
 };
