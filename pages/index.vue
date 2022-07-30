@@ -16,7 +16,7 @@
                     <li v-for="room in rooms"
                         :key="room.id"
                         :class="$style.itemRoom"
-                        @click="() => nextRoom(room.id)"
+                        @click="() => nextRoom(room)"
                     >
                         <svg-icon name="room"
                                   :class="$style.roomIcon"
@@ -92,9 +92,9 @@ export default {
     methods: {
         ...mapMutations(['setCurrentRoom']),
 
-        nextRoom(numberRoom) {
+        nextRoom(currentRoom) {
             // устанавливаем текущую комнату
-            this.setCurrentRoom(numberRoom);
+            this.setCurrentRoom(currentRoom);
             this.$router.push({
                 name: 'chat',
             });

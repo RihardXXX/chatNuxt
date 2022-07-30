@@ -13,7 +13,7 @@
                     <div v-for="room in rooms"
                          :key="room.id"
                          :class="[$style.item, $style._room, {
-                             [$style._activeRoom]: currentRoom === room.id,
+                             [$style._activeRoom]: currentRoom.id === room.id,
                          }]"
                          @click="() => changeRoom(room)"
                     >
@@ -160,6 +160,7 @@ export default {
     },
 
     mounted() {
+        // отправляем пользователя и текущую комнату на сервер
         this.$socket.emit('joinedRooms', {
             user: this.user,
             room: this.currentRoom,

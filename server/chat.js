@@ -17,14 +17,11 @@ const createMessage = (text, username, userId, id = uuidv4()) => ({ text, userna
 io.on('connection', socket => {
     // инициализация комнат для общения
     socket.on('initialRooms', async ({ user }, cb) => {
-        // socket.emit('initialRoomsClient', rooms);
+        console.log('------');
         // если нет в БД общей комнаты то создаем её
         const room = await Room.findOne({ name: 'общая' }).exec();
-        // const room = await Room.exists({ name: /общая/i });
-        console.log(room);
         if (!room) {
-            console.log('user', user);
-
+            // создав комнату, сразу кладем юзера туда
             const newRoom = new Room({
                 name: 'общая',
                 topic: 'теги',
@@ -32,7 +29,6 @@ io.on('connection', socket => {
                 messages: [],
             });
 
-            console.log('newRoom', newRoom);
             newRoom.save(function(err, doc, next) {
                 if (err) {
                     const errorsList = Object.values(err.errors).map(item => item.properties.message);
@@ -42,6 +38,13 @@ io.on('connection', socket => {
                 }
             });
         } else {
+            // если комната есть то добавляем участника
+            // но делаем проверку чтобы он там ранее не был
+            const isRepeat = room.users.some(item => item._id === user._id);
+            if (!isRepeat) {
+                room.users.push(user);
+                await room.save();
+            }
             socket.emit('initialRoomsClient', [room]);
         }
     });
@@ -63,9 +66,12 @@ io.on('connection', socket => {
     socket.on('joinedRooms', ({ user, room }, cb) => {
         // console.log('room: ', room);
         // цепляемся в определенной комнате
-        socket.join(room);
-
+        socket.join(room.id);
         const username = user.username;
+
+        // тут создаём модель сообщения и сохраняем её
+
+        // потом модель сообщения сохраненное кладём в сообщения текущей комнаты
 
         socket.emit('addMessageFromServer', createMessage(`привет пользователь ${username}`, 'admin'));
         // то что будем транслироваться для других участников

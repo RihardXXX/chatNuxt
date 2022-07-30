@@ -6,7 +6,7 @@ export const state = () => ({
         id: 0,
         title: 'russia',
     }],
-    // id текущей комнаты
+    // текущая комната
     currentRoom: null,
     // количество пользователей в текущей комнате
     usersCurrentRoom: [],
@@ -61,7 +61,7 @@ export const mutations = {
     deleteMessages(state) {
         state.messages = [];
     },
-    // устновка айди текущей комнаты
+    // установка текущей комнаты
     setCurrentRoom(state, currentRoom) {
         state.currentRoom = currentRoom;
     },
