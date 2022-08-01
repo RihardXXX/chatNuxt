@@ -24,21 +24,3 @@ npm run dev
 ```
 npm run build && npm run start
 ```
-
-### Для запуска `https://` сервера
-
-#### Устанавливаем `mkcert` 
-
-https://github.com/FiloSottile/mkcert
-
-#### Генерируем `ssl` сертификат и ключ для `localhost`
-
-```
-mkcert localhost
-```
-
-#### Прописываем необходимые `env` переменные
-```
-HTTPS_CERT - путь до сертификата ./ssl/localhost.pem
-HTTPS_KEY - путь до ключа ./ssl/localhost-key.pem
-```

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 // Модель сообщений
 const message = new mongoose.Schema({
-    room: { type: Object, default: {} },
+    room: String,
     user: { type: Object, default: {} },
     message_body: String,
     message_status: { type: Boolean, default: false },

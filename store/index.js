@@ -1,34 +1,36 @@
 export const state = () => ({
-    // сообщения в комнате
-    messages: [],
     // комнаты
-    rooms: [{
-        id: 0,
-        title: 'russia',
-    }],
+    rooms: [],
     // текущая комната
     currentRoom: null,
-    // количество пользователей в текущей комнате
-    usersCurrentRoom: [],
     // массив ошибок
     errors: null,
 });
 
-export const getters = {};
+export const getters = {
+    // количество пользователей в текущей комнате
+    usersCurrentRoom(state) {
+        return state.currentRoom.users;
+    },
+    // сообщения в текущей комнате
+    messagesCurrentRoom(state) {
+        return state.currentRoom.messages;
+    },
+};
 
 export const actions = {
     async nuxtServerInit({ state, commit, dispatch }) {
         // Get initial data here
     },
     // добавления сообщения
-    SOCKET_addMessageFromServer({ commit }, message) {
-        // console.log('ctx: ', ctx);
-        // console.log('SOCKET_newMessage: ', data);
-        commit('addMessage', message);
-    },
+    // SOCKET_addMessageFromServer({ commit }, message) {
+    //     // console.log('ctx: ', ctx);
+    //     // console.log('SOCKET_newMessage: ', data);
+    //     commit('addMessage', message);
+    // },
     // инициализация комнат
     SOCKET_initialRoomsClient({ commit }, rooms) {
-        // console.log('ctx: ', ctx);
+        // console.log('rooms: ', rooms);
         // console.log('SOCKET_newMessage: ', data);
         commit('setRooms', rooms);
     },
@@ -50,17 +52,23 @@ export const actions = {
         // console.log('SOCKET_newMessage: ', data);
         commit('setErrorStart', errors);
     },
+    // обновление данных в текущей комнате из бэкенда
+    SOCKET_updateCurrentRoom({ commit }, currentRoom) {
+        // console.log('ctx: ', ctx);
+        // console.log('SOCKET_newMessage: ', data);
+        commit('updateRoom', currentRoom);
+    },
 };
 
 export const mutations = {
     // добавление сообщений
-    addMessage(state, message) {
-        state.messages = [...state.messages, message];
-    },
+    // addMessage(state, message) {
+    //     state.messages = [...state.messages, message];
+    // },
     // удаление всех сообщений в комнате
-    deleteMessages(state) {
-        state.messages = [];
-    },
+    // deleteMessages(state) {
+    //     state.messages = [];
+    // },
     // установка текущей комнаты
     setCurrentRoom(state, currentRoom) {
         state.currentRoom = currentRoom;
@@ -80,5 +88,9 @@ export const mutations = {
     // инициализация ошибок
     setErrorStart(state, errors) {
         state.errors = [...errors];
+    },
+    // обновление данных в текущей комнате
+    updateRoom(state, currentRoom) {
+        state.currentRoom = currentRoom;
     },
 };

@@ -1,6 +1,15 @@
 <template>
     <div :class="$style.IndexPage">
         <div :class="$style.container">
+            <button :class="$style.UpDown"
+                    @click="upOrDownList"
+            >
+                <svg-icon name="left-arrow"
+                          :class="[$style.iconUpDown, {
+                              [$style._up]: up
+                          }]"
+                />
+            </button>
             <div :class="$style.chatWindow">
                 <div :class="$style.chatRooms">
                     <div :class="[$style.item, $style._room, $style._createRoom]"
@@ -20,12 +29,14 @@
                         {{ room.name }}
                     </div>
                 </div>
-                <div :class="$style.chatContainer">
-                    <div v-for="message in messages"
-                         :key="message.id"
-                         :ref="message.name"
+                <div ref="chatContainer"
+                     :class="$style.chatContainer"
+                >
+                    <div v-for="message in messagesCurrentRoom"
+                         :key="message._id"
+                         :ref="message._id"
                          :class="[$style.itemContainer, {
-                             [$style._right]: message.userId === user._id
+                             [$style._right]: message.user._id === user._id
                          }]"
                     >
                         <div v-tooltip.bottom-end="{
@@ -36,10 +47,10 @@
                              @click="() => setName(message.username)"
                         >
                             <span :class="$style.username">
-                                {{ message.username }}:
+                                {{ message.user.username }}:
                             </span>
                             <span :class="$style.userMessage">
-                                {{ message.text }}
+                                {{ message.message_body }}
                             </span>
                         </div>
                     </div>
@@ -76,7 +87,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: 'ChatRoom',
@@ -85,26 +96,13 @@ export default {
 
     data() {
         return {
-            // rooms: [
-            //     {
-            //         id: 0,
-            //         title: 'Moscow',
-            //     },
-            //     {
-            //         id: 1,
-            //         title: 'London',
-            //     },
-            //     {
-            //         id: 2,
-            //         title: 'New York',
-            //     },
-            // ],
-
             interval: null,
 
             id: 1,
 
             text: '',
+            // вверх или вниз включен режим
+            up: false,
         };
     },
 
@@ -129,32 +127,21 @@ export default {
         ]),
 
         ...mapState([
-            'messages',
             'currentRoom',
             'rooms',
-            'usersCurrentRoom',
         ]),
+
+        ...mapGetters(['usersCurrentRoom', 'messagesCurrentRoom']),
     },
 
     watch: {
-        // отрезаем список если число сообщений больше 200
-        list(list) {
-            // console.log(112, list.length);
-            if (list.length > 100) {
-                this.list = this.list.slice(50);
-            }
-        },
-
         // тут следим за списком и у определенного списка докручиваем скролл
-        messages(messages) {
+        messagesCurrentRoom(messages) {
             // если есть список сообщений то доклучиваем скрол к последнему сообщению
-            if (messages.length) {
+            if (messages.length && !this.up) {
                 // тут будем делать скрол как получим ответ от сервера
-                const name = messages[messages.length-1].name;
-                setTimeout(() => {
-                    const element = this.$refs[name][0];
-                    element.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                }, 1000);
+                const _id = messages[messages.length-1]._id;
+                this.nextMessageScroll(_id, 1000);
             }
         },
     },
@@ -184,11 +171,8 @@ export default {
                 return;
             }
             const user = this.user;
-            this.$socket.emit('createNewMessage', { text: this.text, room: this.currentRoom, user }, data => {
-                // тут будем делать скрол как получим ответ от сервера
-                const element = this.$refs[data.name][0];
-                setTimeout(() => element.scrollIntoView({ block: 'center', behavior: 'smooth' }), 1000);
-            });
+            // console.log('this.currentRoom: ', this.currentRoom);
+            this.$socket.emit('createNewMessage', { text: this.text, room: this.currentRoom, user });
 
             this.text = '';
         },
@@ -201,7 +185,6 @@ export default {
 
         // сменить комнату
         changeRoom(room) {
-            // console.log(room);
             // выход из комнаты старой
             // при смене комнаты очищаем сообщения в чате текущем
             this.deleteMessages();
@@ -218,8 +201,33 @@ export default {
 
         // создать новую комнату для общения
         createNewRoom() {
-            console.log('create new room');
+            // console.log('create new room');
             this.$socket.emit('createNewRoom');
+        },
+
+        // функция которая скроллит автоматически к определенному элементу
+        nextMessageScroll(_id, duration) {
+            setTimeout(() => {
+                const element = this.$refs[_id][0];
+                element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, duration);
+        },
+
+        // поднимаемся по сообщениям и спускаемся плавно
+        // если спустились то включаем авто спуск для новых сообщений
+        upOrDownList() {
+            // перемещаем стрелку, отключаем автоскролл вниз
+            this.up = !this.up;
+            // скроллим плавно к верхнем элементу если включен режим вверх
+            if (this.messagesCurrentRoom.length && this.up) {
+                // скроллим к первому верхнему элементу
+                const _id = this.messagesCurrentRoom[0]._id;
+                this.nextMessageScroll(_id, 1000);
+            } else {
+                // включаем режим авто скролла и скроллим к последнему элементу
+                const _id = this.messagesCurrentRoom[this.messagesCurrentRoom.length-1]._id;
+                this.nextMessageScroll(_id, 1000);
+            }
         },
     },
 };
@@ -232,12 +240,14 @@ export default {
     }
 
     .container {
+        position: relative;
         width: 100%;
         height: 100%;
         background-color: $gray-700;
     }
 
     .chatWindow {
+        //position: relative;
         overflow: auto;
         display: flex;
         width: 100%;
@@ -267,11 +277,35 @@ export default {
     }
 
     .chatContainer {
+        //position: relative;
         overflow: auto;
         display: flex;
         width: 80%;
         height: 100%;
         flex-direction: column;
+    }
+
+    .UpDown {
+        position: absolute;
+        right: 0;
+        bottom: -9.5rem;
+        z-index: 100;
+        //border: none;
+        padding: 1rem;
+        border-radius: .5rem;
+        border: .5px solid $gray-200;
+        background: $white;
+    }
+
+    .iconUpDown {
+        width: 2rem;
+        height: 2rem;
+        transform: rotate(90deg);
+        transition: .7s;
+
+        &._up {
+            transform: rotate(-90deg);
+        }
     }
 
     .itemContainer {

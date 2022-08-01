@@ -2,7 +2,7 @@ const express = require('express');
 const authorizationRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
-const normalizeResponse = require('./helpers');
+const { normalizeResponse } = require('./helpers');
 const JWT_SECRET = require('./config');
 
 // middleware that is specific to this router

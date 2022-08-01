@@ -1,5 +1,10 @@
 <template>
     <header :class="$style.headerMain">
+        <div :class="$style.iconInstagramSection">
+            <svg-icon name="logoHeader"
+                      :class="$style.iconInstagram"
+            />
+        </div>
         <div :class="$style.rooms"
              @click="selectRooms"
         >
@@ -64,6 +69,7 @@ export default {
 
 <style lang="scss" module>
     .headerMain {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -71,6 +77,17 @@ export default {
         max-height: 20vh;
         //padding: 1rem;
         border-top: 1px solid $gray-600;
+    }
+
+    .iconInstagramSection {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    .iconInstagram {
+        width: 14rem;
+        height: 4rem;
     }
 
     .person {
