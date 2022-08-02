@@ -12,12 +12,12 @@
             </button>
             <div :class="$style.chatWindow">
                 <div :class="$style.chatRooms">
-                    <div :class="[$style.item, $style._room, $style._createRoom]"
-                         @click="createNewRoom"
-                    >
-                        создать комнату
-                    </div>
-                    <div :class="$style.border"></div>
+                    <!--                    <div :class="[$style.item, $style._room, $style._createRoom]"-->
+                    <!--                         @click="createNewRoom"-->
+                    <!--                    >-->
+                    <!--                        создать комнату-->
+                    <!--                    </div>-->
+                    <!--                    <div :class="$style.border"></div>-->
                     <h3 :class="$style.titleRoom">Комнаты:</h3>
                     <div v-for="room in rooms"
                          :key="room.id"

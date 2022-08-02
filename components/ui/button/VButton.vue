@@ -1,5 +1,6 @@
 <template>
     <button :class="[$style.container, classContainer]">
+        <slot></slot>
         <span :class="$style.name">{{ name }}</span>
     </button>
 </template>

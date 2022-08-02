@@ -9,28 +9,12 @@
             <ul v-if="rooms.length"
                 :class="$style.roomsList"
             >
-                <li v-for="room in rooms"
-                    :key="room._id"
-                    :class="$style.itemRoom"
-                    @click="() => nextRoom(room)"
-                >
-                    <div :class="$style.roomName">
-                        <svg-icon name="room"
-                                  :class="$style.roomIcon"
-                        />
-                        <div :class="$style.linkItem">
-                            {{ room.name }}
-                        </div>
-                    </div>
-                    <div>
-                        <span>
-                            {{ room.users.length || 0 }}
-                        </span>
-                        <span>
-                            {{ room.users.length | plural(['пользователь', 'пользователя', 'пользователей']) }}
-                        </span>
-                    </div>
-                </li>
+                <RoomItem v-for="room in rooms"
+                          :key="room.id"
+                          :name="room.name"
+                          :count="room.users.length"
+                          @click="() => nextRoom(room)"
+                />
             </ul>
         </div>
         <div :class="$style.column">
@@ -42,15 +26,23 @@
             <h4>
                 Твиты в разработке
             </h4>
+            <h4>
+                ваши комнаты
+            </h4>
         </div>
     </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import RoomItem from '~/components/main/RoomItem';
 
 export default {
     name: 'RoomList',
+
+    components: {
+        RoomItem,
+    },
 
     async fetch() {
         await this.$socket.emit('initialRooms', { user: this.user });

@@ -24,6 +24,7 @@ const user = new mongoose.Schema({
         required: [true, 'пароль является обязательным полем для заполнения'],
     },
     is_active: { type: Boolean, default: false },
+    roomCount: { type: Number, default: 0 },
 }, { timestamps: true });
 
 user.plugin(uniqueValidator, { message: 'такое имя или электронная почта уже существует' });

@@ -1,5 +1,14 @@
 <template>
     <header :class="$style.headerMain">
+        <VButton name="создать комнату"
+                 :class-container="$style.button"
+                 @click.native="openModal"
+        >
+            <div :class="$style.addRoom">
+                <div :class="$style.horizontal"></div>
+                <div :class="$style.vertical"></div>
+            </div>
+        </VButton>
         <div :class="$style.iconInstagramSection">
             <svg-icon name="logoHeader"
                       :class="$style.iconInstagram"
@@ -34,9 +43,15 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import VButton from '~/components/ui/button/VButton';
+import HelloModal from '~/components/common/HelloModal';
 
 export default {
     name: 'TheHeader',
+
+    components: {
+        VButton,
+    },
 
     computed: {
         ...mapState('authorization', [
@@ -62,6 +77,12 @@ export default {
         selectRooms() {
             console.log('selectRooms');
             this.$router.push('/');
+        },
+
+        // открываем модалку для создания комнаты
+        openModal() {
+            console.log('open');
+            this.$modal.open(HelloModal, {});
         },
     },
 };
@@ -175,5 +196,70 @@ export default {
         height: 2rem;
         cursor: pointer;
         fill: $black-600;
+    }
+
+    .button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 20%;
+        padding: .4rem .6rem;
+        border: 2px solid $black-900;
+
+        span {
+            color: $black-900;
+        }
+
+        &:hover {
+            border: 2px solid $white;
+
+            .addRoom {
+                border: 2px solid $white;
+                transition: .7s;
+            }
+
+            .horizontal {
+                background-color: $white;
+                transition: .7s;
+            }
+
+            .vertical {
+                background-color: $white;
+                transition: .7s;
+            }
+        }
+    }
+
+    .addRoom {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: .2rem;
+        border-radius: .5rem;
+        border: 2px solid $black-900;
+    }
+
+    .horizontal {
+        width: 100%;
+        height: .3rem;
+        border-radius: 2px;
+        background-color: $black-900;
+    }
+
+    .vertical {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: .3rem;
+        height: 85%;
+        border-radius: 2px;
+        background-color: $black-900;
+        transform: translate(-50%, -50%);
     }
 </style>
