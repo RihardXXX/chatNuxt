@@ -44,7 +44,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import VButton from '~/components/ui/button/VButton';
-import HelloModal from '~/components/common/HelloModal';
+import ModalRoomCreate from '~/components/main/ModalRoomCreate';
 
 export default {
     name: 'TheHeader',
@@ -82,7 +82,10 @@ export default {
         // открываем модалку для создания комнаты
         openModal() {
             console.log('open');
-            this.$modal.open(HelloModal, {});
+            this.$modal.open(ModalRoomCreate, {
+                title: 'Создать новую комнату',
+                description: `Вы можете создать не более ${this.user.roomCount} комнат`,
+            });
         },
     },
 };

@@ -4,8 +4,10 @@ const mongoose = require('mongoose');
 
 // Модель комнат
 const room = new mongoose.Schema({
+    author: { type: String, default: '' },
+    private: { type: Boolean, default: false },
     name: { type: String, lowercase: true, unique: true },
-    topic: String,
+    topic: { type: String, default: '' },
     users: [{}],
     messages: [{}],
     created_at: Date,

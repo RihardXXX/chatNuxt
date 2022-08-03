@@ -12,22 +12,13 @@
             </button>
             <div :class="$style.chatWindow">
                 <div :class="$style.chatRooms">
-                    <!--                    <div :class="[$style.item, $style._room, $style._createRoom]"-->
-                    <!--                         @click="createNewRoom"-->
-                    <!--                    >-->
-                    <!--                        создать комнату-->
-                    <!--                    </div>-->
-                    <!--                    <div :class="$style.border"></div>-->
                     <h3 :class="$style.titleRoom">Комнаты:</h3>
-                    <div v-for="room in rooms"
-                         :key="room.id"
-                         :class="[$style.item, $style._room, {
-                             [$style._activeRoom]: currentRoom.id === room.id,
-                         }]"
-                         @click="() => changeRoom(room)"
-                    >
-                        {{ room.name }}
-                    </div>
+                    <UserOrRoomItem v-for="room in rooms"
+                                    :key="room.id"
+                                    :active="currentRoom.id === room.id"
+                                    :label="room.name"
+                                    @click="() => changeRoom(room)"
+                    />
                 </div>
                 <div ref="chatContainer"
                      :class="$style.chatContainer"
@@ -44,7 +35,7 @@
                                  // delay: { show: 200, hide: 100 },
                              }"
                              :class="$style.item"
-                             @click="() => setName(message.username)"
+                             @click="() => setName(message)"
                         >
                             <span :class="$style.username">
                                 {{ message.user.username }}:
@@ -57,30 +48,20 @@
                 </div>
                 <div :class="$style.userName">
                     <h3 :class="$style.titleRoom">пользователи:</h3>
-                    <div v-for="user in usersCurrentRoom"
-                         :key="user.id"
-                         :class="[$style.item, $style._room]"
-                    >
-                        {{ user.username }}
-                    </div>
+                    <UserOrRoomItem v-for="user in usersCurrentRoom"
+                                    :key="user.id"
+                                    :label="user.username"
+                    />
                 </div>
             </div>
             <div :class="$style.inputSection">
-                <div :class="$style.sendSection">
-                    <input ref="input"
-                           :value="text"
-                           :class="$style.inputMessage"
-                           @input="event => text = event.target.value.trim()"
-                           @keyup.enter="sendMessage"
-                    />
-                    <div :class="$style.sendMessage"
-                         @click="sendMessage"
-                    >
-                        <svg-icon name="send"
-                                  :class="$style.sendIcon"
-                        />
-                    </div>
-                </div>
+                <VInputSend ref="usernameInput"
+                            :value="text"
+                            icon-name="send"
+                            @input="event => text = event.target.value.trim()"
+                            @keyup.enter.native="sendMessage"
+                            @click="sendMessage"
+                />
             </div>
         </div>
     </div>
@@ -88,9 +69,16 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from 'vuex';
+import UserOrRoomItem from '~/components/main/UserOrRoomItem';
+import VInputSend from '~/components/ui/input/VInputSend';
 
 export default {
     name: 'ChatRoom',
+
+    components: {
+        UserOrRoomItem,
+        VInputSend,
+    },
 
     middleware: 'auth',
 
@@ -178,25 +166,27 @@ export default {
         },
 
         // кому мы хотим обратится в чате
-        setName(username) {
+        setName({ user: { username } }) {
             this.text = `@${username} `;
-            this.$refs.input.focus();
+            console.log(this.$refs);
+            this.$refs.usernameInput.focus();
         },
 
         // сменить комнату
         changeRoom(room) {
+            console.log(room);
             // выход из комнаты старой
             // при смене комнаты очищаем сообщения в чате текущем
-            this.deleteMessages();
-            // когда пользователь выходит сообщаем остальным что пользователь вышел
-            this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
-
-            // вход в новую комнату
-            this.setCurrentRoom(room.id);
-            this.$socket.emit('joinedRooms', {
-                user: this.user,
-                room: room.id,
-            });
+            // this.deleteMessages();
+            // // когда пользователь выходит сообщаем остальным что пользователь вышел
+            // this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
+            //
+            // // вход в новую комнату
+            // this.setCurrentRoom(room.id);
+            // this.$socket.emit('joinedRooms', {
+            //     user: this.user,
+            //     room: room.id,
+            // });
         },
 
         // создать новую комнату для общения
