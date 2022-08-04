@@ -12,6 +12,36 @@
         >
         </p>
 
+
+        <div :class="$style.settingSection">
+            <VInputSend :value="room.roomName"
+                        label="имя комнаты"
+                        icon-name="send"
+                        :style="{ width: '50%' }"
+                        @input="event => room.roomName = event.target.value.trim()"
+                        @keyup.enter.native="createNewRoom"
+                        @click="createNewRoom"
+            />
+            <div :class="$style.typeRoom">
+                <VButton name="публичная"
+                         :class="[$style.buttonType, {
+                             [$style.active]: !room.private
+                         }]"
+                         @click="room.private = false"
+                >
+                    <svg-icon name="public" :class="$style.iconRoom" />
+                </VButton>
+                <VButton name="приватная"
+                         :class="[$style.buttonType, {
+                             [$style.active]: room.private
+                         }]"
+                         @click="room.private = true"
+                >
+                    <svg-icon name="private" :class="$style.iconRoom" />
+                </VButton>
+            </div>
+        </div>
+
         <button :class="$style.buttonClose"
                 @click="$emit('close')"
         >
@@ -23,9 +53,16 @@
 </template>
 
 <script>
+import VInputSend from '~/components/ui/input/VInputSend';
+import VButton from '~/components/ui/button/VButton';
 
 export default {
     name: 'ModalRoomCreate',
+
+    components: {
+        VButton,
+        VInputSend,
+    },
 
     props: {
         title: {
@@ -49,20 +86,23 @@ export default {
             // даные для комнаты
             room: {
                 private: false,
-                name: '',
+                roomName: '',
             },
         };
     },
 
-    // methods: {
-    //     openHelloModal() {
-    //         this.$modal.open(HelloModal, {
-    //             title: 'Hello world!',
-    //             count: this.count + 1,
-    //             description: 'It\'s modal example, glad&nbsp;to&nbsp;see you!',
-    //         });
-    //     },
-    // },
+    methods: {
+        // openHelloModal() {
+        //     this.$modal.open(HelloModal, {
+        //         title: 'Hello world!',
+        //         count: this.count + 1,
+        //         description: 'It\'s modal example, glad&nbsp;to&nbsp;see you!',
+        //     });
+        // },
+        createNewRoom() {
+            console.log('createNewRoom');
+        },
+    },
 };
 </script>
 
@@ -71,11 +111,13 @@ export default {
         padding-bottom: 1rem;
         border-bottom: 1px solid $gray-600;
         text-align: center;
+        font-size: 2rem;
     }
 
     .description {
         margin-top: $offset * 3;
         text-align: center;
+        font-size: 1.6rem;
     }
 
     .container {
@@ -90,6 +132,11 @@ export default {
         box-shadow: 0 8px 24px rgba($black-400, .1);
     }
 
+    .settingSection {
+        display: flex;
+        justify-content: flex-start;
+    }
+
     .buttonClose {
         position: absolute;
         right: 0;
@@ -100,6 +147,56 @@ export default {
         border-radius: .5rem;
         border: none;
         background-color: $white;
+    }
+
+    .sendInput {
+        width: 25rem;
+    }
+
+    .typeRoom {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .buttonType {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .3rem;
+        transition: .8s;
+
+        &:hover {
+            transition: .8s;
+
+            svg {
+                transition: .8s;
+                fill: $white;
+            }
+        }
+
+        &:last-child {
+            margin-left: 1rem;
+        }
+
+        &.active {
+            background-color: $gray-500;
+            //transition: .8s;
+
+            span {
+                color: $white;
+            }
+
+            svg {
+                fill: $white;
+            }
+        }
+    }
+
+    .iconRoom {
+        width: 2rem;
+        height: 2rem;
+        fill: $gray-400;
     }
 
     .closeIcon {

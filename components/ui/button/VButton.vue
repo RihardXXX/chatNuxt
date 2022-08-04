@@ -1,5 +1,5 @@
 <template>
-    <button :class="[$style.container, classContainer]">
+    <button :class="[$style.container, classContainer]" @click="$emit('click')">
         <slot></slot>
         <span :class="$style.name">{{ name }}</span>
     </button>
