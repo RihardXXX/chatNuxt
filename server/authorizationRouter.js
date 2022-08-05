@@ -12,11 +12,12 @@ authorizationRouter.use(function(req, res, next) {
 
 // registration user
 authorizationRouter.post('/registration', function(req, res) {
-    const { username, email, password } = req.body.user;
+    const { username, email, password, gender } = req.body.user;
     const user = new User({
         username,
         email,
         password,
+        gender,
     });
     user.save(function(err, doc, next) {
         if (err) {

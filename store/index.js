@@ -5,6 +5,8 @@ export const state = () => ({
     currentRoom: null,
     // массив ошибок
     errors: null,
+    // комнаты созданные мною
+    myRooms: [{ id: 1, name: 'test', users: [1, 2] }],
 });
 
 export const getters = {
@@ -58,6 +60,10 @@ export const actions = {
         // console.log('SOCKET_newMessage: ', data);
         commit('updateRoom', currentRoom);
     },
+    // заполнить комнаты созданные мною
+    SOCKET_getMyRooms({ commit }, myRooms) {
+        commit('getMyRoomsSet', myRooms);
+    },
 };
 
 export const mutations = {
@@ -92,5 +98,9 @@ export const mutations = {
     // обновление данных в текущей комнате
     updateRoom(state, currentRoom) {
         state.currentRoom = currentRoom;
+    },
+    // установить список комнат созданных мною
+    getMyRoomsSet(state, myRooms) {
+        state.myRooms = myRooms;
     },
 };

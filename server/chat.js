@@ -10,7 +10,7 @@ const { normalizeRoom } = require('./helpers');
 // const User = require('~/server/models/user');
 // const Message = require('~/server/models/message');
 
-const rooms = [];
+// const rooms = [];
 
 // const createMessage = (text, username, userId, id = uuidv4()) => ({ text, username, userId, id, name: `name${id}` });
 
@@ -154,17 +154,23 @@ io.on('connection', socket => {
     // });
 
     // создать новую комнату
-    socket.on('createNewRoom', () => {
-        // берем последний айдишник комнаты и его инкрементируем
-        const newId = rooms[rooms.length-1].id+=1;
-        // создаем новую тестовую комнату
-        const newRoom = {
-            id: newId,
-            name: `test${newId}`,
-        };
-        // добавляем на сервер в новую комнату и на клиент новую комнату
-        rooms.push(newRoom);
-        socket.emit('createRoom', newRoom);
+    socket.on('createNewRoom', ({ room, user }, cb) => {
+        console.log('user: ', user);
+        console.log('room: ', room);
+
+        // получить данные от клиента
+
+        // сформировать комнату
+
+        // сохранить комнату
+
+        // сделать декремент в счетчике создания комнат у данного пользователя
+
+        // сохранить данные пользователя после декремента
+
+        // вызывать getMyRooms и положить туда список всех моих комнат
+
+        // обновить список всех комнат на клиенте
     });
 });
 

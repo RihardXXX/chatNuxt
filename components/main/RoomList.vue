@@ -6,13 +6,16 @@
                           :class="$style.chatsIcon"
                 />
             </div>
+            <h4>
+                все  комнаты
+            </h4>
             <ul v-if="rooms.length"
                 :class="$style.roomsList"
             >
                 <RoomItem v-for="room in rooms"
                           :key="room.id"
                           :name="room.name"
-                          :count="room.users.length"
+                          :count-user="room.users.length"
                           @click="() => nextRoom(room)"
                 />
             </ul>
@@ -24,11 +27,21 @@
                 />
             </div>
             <h4>
-                Твиты в разработке
-            </h4>
-            <h4>
                 ваши комнаты
             </h4>
+            <ul v-if="myRooms.length"
+                :class="$style.roomsList"
+            >
+                <RoomItem v-for="room in myRooms"
+                          :key="room.id"
+                          :name="room.name"
+                          :count-user="room.users.length"
+                          @click="() => nextRoom(room)"
+                />
+            </ul>
+            <div v-else>
+                вы пока не создали не одну комнату
+            </div>
         </div>
     </div>
 </template>
@@ -69,6 +82,7 @@ export default {
 
         ...mapState([
             'rooms',
+            'myRooms',
         ]),
 
     },

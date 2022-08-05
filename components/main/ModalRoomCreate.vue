@@ -11,6 +11,17 @@
            v-html="description"
         >
         </p>
+        {{ room }}
+
+        <ul v-if="myRooms.length"
+            :class="$style.roomsList"
+        >
+            <RoomItem v-for="room in myRooms"
+                      :key="room.id"
+                      :name="room.name"
+                      :count-user="room.users.length"
+            />
+        </ul>
 
 
         <div :class="$style.settingSection">
@@ -22,24 +33,12 @@
                         @keyup.enter.native="createNewRoom"
                         @click="createNewRoom"
             />
-            <div :class="$style.typeRoom">
-                <VButton name="публичная"
-                         :class="[$style.buttonType, {
-                             [$style.active]: !room.private
-                         }]"
-                         @click="room.private = false"
-                >
-                    <svg-icon name="public" :class="$style.iconRoom" />
-                </VButton>
-                <VButton name="приватная"
-                         :class="[$style.buttonType, {
-                             [$style.active]: room.private
-                         }]"
-                         @click="room.private = true"
-                >
-                    <svg-icon name="private" :class="$style.iconRoom" />
-                </VButton>
-            </div>
+            <VToggleButton :active="room.private"
+                           first-name="публичная"
+                           last-name="приватная"
+                           @clickFirst="room.private = false"
+                           @clickLast="room.private = true"
+            />
         </div>
 
         <button :class="$style.buttonClose"
@@ -53,15 +52,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VInputSend from '~/components/ui/input/VInputSend';
-import VButton from '~/components/ui/button/VButton';
+import VToggleButton from '~/components/main/VToggleButton';
+import RoomItem from '~/components/main/RoomItem';
 
 export default {
     name: 'ModalRoomCreate',
 
     components: {
-        VButton,
         VInputSend,
+        VToggleButton,
+        RoomItem,
     },
 
     props: {
@@ -91,16 +93,19 @@ export default {
         };
     },
 
+    computed: {
+        ...mapState(['myRooms']),
+        ...mapState('authorization', ['user']),
+    },
+
     methods: {
-        // openHelloModal() {
-        //     this.$modal.open(HelloModal, {
-        //         title: 'Hello world!',
-        //         count: this.count + 1,
-        //         description: 'It\'s modal example, glad&nbsp;to&nbsp;see you!',
-        //     });
-        // },
         createNewRoom() {
-            console.log('createNewRoom');
+            if (!this.room.roomName) {
+                return false;
+            }
+            this.$socket.emit('createNewRoom', { room: this.room, user: this.user });
+            this.room.roomName = '';
+            this.room.private = false;
         },
     },
 };
@@ -197,6 +202,14 @@ export default {
         width: 2rem;
         height: 2rem;
         fill: $gray-400;
+    }
+
+    .roomsList {
+        overflow: auto;
+        //width: 100%;
+        height: 55%;
+        margin: 3rem 4rem;
+        list-style: none;
     }
 
     .closeIcon {

@@ -18,6 +18,16 @@
                     :class-container="$style.inputItem"
                     @input="setPassword"
             />
+            <div :class="$style.genderQuestion">
+                укажите ваш пол
+            </div>
+            <VToggleButton :active="gender"
+                           first-name="женский"
+                           last-name="мужской"
+                           :icon="false"
+                           @clickFirst="gender = false"
+                           @clickLast="gender = true"
+            />
             <VButton :class-container="$style.buttonRegister"
                      name="регистрация"
             />
@@ -35,6 +45,7 @@ import VInput from '~/components/ui/input/VInput';
 import VButton from '~/components/ui/button/VButton';
 import VErrorList from '~/components/ui/error/VErrorList';
 import moduleApi from '~/config/api/module';
+import VToggleButton from '~/components/main/VToggleButton';
 
 export default {
     name: 'RegistrationForm',
@@ -43,6 +54,7 @@ export default {
         VInput,
         VButton,
         VErrorList,
+        VToggleButton,
     },
 
     props: {
@@ -60,6 +72,7 @@ export default {
             username: '',
             email: '',
             password: '',
+            gender: false,
         };
     },
 
@@ -84,12 +97,14 @@ export default {
         setRegistration() {
             this.errors = [];
             const url = moduleApi.authorization.registration;
+            const gender = this.gender ? 'муж' : 'жен';
 
             this.$axios.post(url, {
                 user: {
                     username: this.username,
                     email: this.email,
                     password: this.password,
+                    gender,
                 },
             })
                 .then(({ data }) => {
@@ -121,6 +136,11 @@ export default {
         &:first-child {
             margin-top: 0;
         }
+    }
+
+    .genderQuestion {
+        padding: .4rem 0;
+        text-align: center;
     }
 
     .buttonRegister {
