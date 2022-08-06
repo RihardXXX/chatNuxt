@@ -1,46 +1,49 @@
 <template>
     <div :class="$style.container">
-        <h3 v-if="title"
-            :class="$style.title"
-        >
-            {{ title }}
-        </h3>
+        <template v-if="user.roomCount > 0">
+            <h3 v-if="title"
+                :class="$style.title"
+            >
+                Создать комнату
+            </h3>
 
-        <p v-if="description"
-           :class="$style.description"
-           v-html="description"
-        >
-        </p>
-        {{ room }}
+            <p :class="$style.description">
+                Вы можете создать не более {{ user.roomCount }} комнат
+            </p>
 
-        <ul v-if="myRooms.length"
-            :class="$style.roomsList"
-        >
-            <RoomItem v-for="room in myRooms"
-                      :key="room.id"
-                      :name="room.name"
-                      :count-user="room.users.length"
-            />
-        </ul>
+            <ul v-if="myRooms.length"
+                :class="$style.roomsList"
+            >
+                <RoomItem v-for="myRoom in myRooms"
+                          :key="myRoom.id"
+                          :name="myRoom.name"
+                          :count-user="room.users.length"
+                />
+            </ul>
 
 
-        <div :class="$style.settingSection">
-            <VInputSend :value="room.roomName"
-                        label="имя комнаты"
-                        icon-name="send"
-                        :style="{ width: '50%' }"
-                        @input="event => room.roomName = event.target.value.trim()"
-                        @keyup.enter.native="createNewRoom"
-                        @click="createNewRoom"
-            />
-            <VToggleButton :active="room.private"
-                           first-name="публичная"
-                           last-name="приватная"
-                           @clickFirst="room.private = false"
-                           @clickLast="room.private = true"
-            />
+            <div :class="$style.settingSection">
+                <VInputSend :value="room.roomName"
+                            label="имя комнаты"
+                            icon-name="send"
+                            :style="{ width: '50%' }"
+                            @input="event => room.roomName = event.target.value.trim()"
+                            @keyup.enter.native="createNewRoom"
+                            @click="createNewRoom"
+                />
+                <VToggleButton :active="room.private"
+                               first-name="публичная"
+                               last-name="приватная"
+                               @clickFirst="room.private = false"
+                               @clickLast="room.private = true"
+                />
+            </div>
+        </template>
+        <div v-else>
+            <h3 :class="$style.title">
+                Вы не можете создать более 5 комнат
+            </h3>
         </div>
-
         <button :class="$style.buttonClose"
                 @click="$emit('close')"
         >
@@ -213,8 +216,8 @@ export default {
     }
 
     .closeIcon {
-        width: 4rem;
-        height: 4rem;
+        width: 3rem;
+        height: 3rem;
         transform: rotate(45deg);
     }
 </style>

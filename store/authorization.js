@@ -63,4 +63,8 @@ export const actions = {
             resolve();
         });
     },
+    // это для сокета обновление состояния данных юзера с сервера
+    SOCKET_updateUserClient({ commit }, user) {
+        commit('setUser', user);
+    },
 };

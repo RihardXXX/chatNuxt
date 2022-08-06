@@ -6,17 +6,17 @@ export const state = () => ({
     // массив ошибок
     errors: null,
     // комнаты созданные мною
-    myRooms: [{ id: 1, name: 'test', users: [1, 2] }],
+    myRooms: [],
 });
 
 export const getters = {
     // количество пользователей в текущей комнате
     usersCurrentRoom(state) {
-        return state.currentRoom.users;
+        return state?.currentRoom?.users;
     },
     // сообщения в текущей комнате
     messagesCurrentRoom(state) {
-        return state.currentRoom.messages;
+        return state?.currentRoom?.messages;
     },
 };
 

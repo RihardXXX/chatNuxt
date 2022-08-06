@@ -6,8 +6,9 @@ const io = require('socket.io')(server, {
 // const { v4: uuidv4 } = require('uuid');
 const Room = require('./models/room');
 const Message = require('./models/message');
+const User = require('./models/user');
 const { normalizeRoom } = require('./helpers');
-// const User = require('~/server/models/user');
+const { normalizeResponse } = require('./helpers');
 // const Message = require('~/server/models/message');
 
 // const rooms = [];
@@ -155,22 +156,57 @@ io.on('connection', socket => {
 
     // создать новую комнату
     socket.on('createNewRoom', ({ room, user }, cb) => {
-        console.log('user: ', user);
-        console.log('room: ', room);
+        // console.log('user: ', user);
+        // console.log('room: ', room);
 
-        // получить данные от клиента
+        // если нет автора или имени комнаты то бросаем ошибку
+        if (!user._id || !room.roomName) {
+            socket.emit('setError', ['нет пользователя или имени комнаты']);
+            return;
+        }
+
+        // если потрачен лимит создания комнат
+        if (user.roomCount <= 0) {
+            socket.emit('setError', ['вы не можете создать больше 5 комнат']);
+            return;
+        }
 
         // сформировать комнату
+        const newRoom = new Room({
+            author: user._id,
+            private: room.private,
+            name: room.roomName,
+            topic: '',
+        });
+
+        // console.log(123, newRoom);
 
         // сохранить комнату
+        newRoom.save(async function(err, doc, next) {
+            if (!err) {
+                // сделать декремент в счетчике создания комнат у данного пользователя
+                const currentUser = await User.findById(user._id);
+                // уменьшаем количество комнат для создания у пользователя
+                currentUser.roomCount -= 1;
+                // сохранить данные пользователя после декремента
+                await currentUser.save();
+                console.log('currentUser', currentUser);
+                // обновить на клиенте данные
+                io.emit('updateUserClient', normalizeResponse(currentUser.toObject()));
 
-        // сделать декремент в счетчике создания комнат у данного пользователя
+                // получить все комнаты созданные данным пользователем
+                const myRooms = await Room.find({ author: user._id }).exec();
+                console.log(111, myRooms);
+                // вызывать getMyRooms и положить туда список всех моих комнат
+                io.emit('getMyRooms', myRooms);
 
-        // сохранить данные пользователя после декремента
-
-        // вызывать getMyRooms и положить туда список всех моих комнат
-
-        // обновить список всех комнат на клиенте
+                // обновление всех комнат на клиенте
+                socket._events.updateAllRooms();
+            } else {
+                const errorsList = Object.values(err.errors).map(item => item.properties.message);
+                socket.emit('setError', errorsList);
+            }
+        });
     });
 });
 
