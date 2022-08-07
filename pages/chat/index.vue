@@ -15,7 +15,7 @@
                     <h3 :class="$style.titleRoom">Комнаты:</h3>
                     <UserOrRoomItem v-for="room in rooms"
                                     :key="room.id"
-                                    :active="currentRoom.id === room.id"
+                                    :active="currentRoom._id === room._id"
                                     :label="room.name"
                                     @click="() => changeRoom(room)"
                     />
@@ -125,11 +125,12 @@ export default {
     watch: {
         // тут следим за списком и у определенного списка докручиваем скролл
         messagesCurrentRoom(messages) {
+            // console.log('messages: ', messages);
             // если есть список сообщений то доклучиваем скрол к последнему сообщению
             if (messages.length && !this.up) {
                 // тут будем делать скрол как получим ответ от сервера
                 const _id = messages[messages.length-1]._id;
-                this.nextMessageScroll(_id, 1000);
+                this.nextMessageScroll(_id, 1500);
             }
         },
     },
@@ -143,6 +144,7 @@ export default {
     },
 
     beforeDestroy() {
+        // выходим из текущей комнаты
         // когда пользователь выходит сообщаем остальным что пользователь вышел
         this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
     },
@@ -174,19 +176,15 @@ export default {
 
         // сменить комнату
         changeRoom(room) {
-            console.log(room);
-            // выход из комнаты старой
-            // при смене комнаты очищаем сообщения в чате текущем
-            // this.deleteMessages();
-            // // когда пользователь выходит сообщаем остальным что пользователь вышел
-            // this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
-            //
-            // // вход в новую комнату
-            // this.setCurrentRoom(room.id);
-            // this.$socket.emit('joinedRooms', {
-            //     user: this.user,
-            //     room: room.id,
-            // });
+            // console.log(room);
+            // выходим из текущей комнаты
+            this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
+            // устанавливаем новую комнату
+            this.setCurrentRoom(room);
+            this.$socket.emit('joinedRooms', {
+                user: this.user,
+                room,
+            });
         },
 
         // создать новую комнату для общения
@@ -199,7 +197,8 @@ export default {
         nextMessageScroll(_id, duration) {
             setTimeout(() => {
                 const element = this.$refs[_id][0];
-                element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                // console.log('element: ', element);
+                element?.scrollIntoView({ block: 'center', behavior: 'smooth' });
             }, duration);
         },
 

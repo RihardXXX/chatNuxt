@@ -1,48 +1,42 @@
 <template>
     <div :class="$style.container">
-        <template v-if="user.roomCount > 0">
-            <h3 v-if="title"
-                :class="$style.title"
-            >
-                Создать комнату
-            </h3>
+        <h3 :class="$style.title">
+            Создать комнату
+        </h3>
 
-            <p :class="$style.description">
-                Вы можете создать не более {{ user.roomCount }} комнат
-            </p>
+        <p :class="$style.description">
+            {{ description }}
+        </p>
 
-            <ul v-if="myRooms.length"
-                :class="$style.roomsList"
-            >
-                <RoomItem v-for="myRoom in myRooms"
-                          :key="myRoom.id"
-                          :name="myRoom.name"
-                          :count-user="room.users.length"
-                />
-            </ul>
+        <ul v-if="myRooms.length"
+            :class="$style.roomsList"
+        >
+            <RoomItem v-for="myRoom in myRooms"
+                      :key="myRoom.id"
+                      :name="myRoom.name"
+                      :is-my-room="myRoom.author === user._id"
+                      :count-user="myRoom.users.length"
+                      disabled
+                      @deleteRoom="() => deleteRoom(room)"
+            />
+        </ul>
 
 
-            <div :class="$style.settingSection">
-                <VInputSend :value="room.roomName"
-                            label="имя комнаты"
-                            icon-name="send"
-                            :style="{ width: '50%' }"
-                            @input="event => room.roomName = event.target.value.trim()"
-                            @keyup.enter.native="createNewRoom"
-                            @click="createNewRoom"
-                />
-                <VToggleButton :active="room.private"
-                               first-name="публичная"
-                               last-name="приватная"
-                               @clickFirst="room.private = false"
-                               @clickLast="room.private = true"
-                />
-            </div>
-        </template>
-        <div v-else>
-            <h3 :class="$style.title">
-                Вы не можете создать более 5 комнат
-            </h3>
+        <div v-if="user.roomCount > 0" :class="$style.settingSection">
+            <VInputSend :value="room.roomName"
+                        label="имя комнаты"
+                        icon-name="send"
+                        :style="{ width: '50%' }"
+                        @input="event => room.roomName = event.target.value.trim()"
+                        @keyup.enter.native="createNewRoom"
+                        @click="createNewRoom"
+            />
+            <VToggleButton :active="room.private"
+                           first-name="публичная"
+                           last-name="приватная"
+                           @clickFirst="room.private = false"
+                           @clickLast="room.private = true"
+            />
         </div>
         <button :class="$style.buttonClose"
                 @click="$emit('close')"
@@ -55,7 +49,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import VInputSend from '~/components/ui/input/VInputSend';
 import VToggleButton from '~/components/main/VToggleButton';
 import RoomItem from '~/components/main/RoomItem';
@@ -70,15 +64,15 @@ export default {
     },
 
     props: {
-        title: {
-            type: String,
-            default: '',
-        },
-
-        description: {
-            type: String,
-            default: '',
-        },
+        // title: {
+        //     type: String,
+        //     default: '',
+        // },
+        //
+        // description: {
+        //     type: String,
+        //     default: '',
+        // },
 
         count: {
             type: Number,
@@ -99,9 +93,17 @@ export default {
     computed: {
         ...mapState(['myRooms']),
         ...mapState('authorization', ['user']),
+
+        description() {
+            return this.user.roomCount > 0
+                ? `Вы можете создать не более ${this.user.roomCount} комнат`
+                : 'Вы не можете создать более 5 комнат';
+        },
     },
 
     methods: {
+        ...mapMutations(['setCurrentRoom']),
+
         createNewRoom() {
             if (!this.room.roomName) {
                 return false;
@@ -109,6 +111,10 @@ export default {
             this.$socket.emit('createNewRoom', { room: this.room, user: this.user });
             this.room.roomName = '';
             this.room.private = false;
+        },
+
+        deleteRoom(room) {
+            console.log('delete room: ', room);
         },
     },
 };

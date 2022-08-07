@@ -58,6 +58,10 @@ export default {
             'user',
         ]),
 
+        ...mapState([
+            'currentRoom',
+        ]),
+
         username() {
             return this.user.username;
         },
@@ -75,17 +79,16 @@ export default {
 
         // выбрать комнату
         selectRooms() {
-            console.log('selectRooms');
+            // выходим из текущей комнаты
+            // когда пользователь выходит сообщаем остальным что пользователь вышел
+            this.$socket.emit('exitRoom', { user: this.user, room: this.currentRoom });
             this.$router.push('/');
         },
 
         // открываем модалку для создания комнаты
         openModal() {
             console.log('open');
-            this.$modal.open(ModalRoomCreate, {
-                title: 'Создать новую комнату',
-                description: `Вы можете создать не более ${this.user.roomCount} комнат`,
-            });
+            this.$modal.open(ModalRoomCreate);
         },
     },
 };

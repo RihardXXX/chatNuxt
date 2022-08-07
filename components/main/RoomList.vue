@@ -15,8 +15,10 @@
                 <RoomItem v-for="room in rooms"
                           :key="room.id"
                           :name="room.name"
+                          :is-my-room="room.author === user._id"
                           :count-user="room.users.length"
                           @click="() => nextRoom(room)"
+                          @deleteRoom="() => deleteRoom(room)"
                 />
             </ul>
         </div>
@@ -35,8 +37,10 @@
                 <RoomItem v-for="room in myRooms"
                           :key="room.id"
                           :name="room.name"
+                          :is-my-room="room.author === user._id"
                           :count-user="room.users.length"
                           @click="() => nextRoom(room)"
+                          @deleteRoom="() => deleteRoom(room)"
                 />
             </ul>
             <div v-else>
@@ -58,6 +62,8 @@ export default {
     },
 
     async fetch() {
+        // инициализация всех комнат
+        // инициализация комнат пользователя
         await this.$socket.emit('initialRooms', { user: this.user });
     },
 
@@ -96,6 +102,10 @@ export default {
             this.$router.push({
                 name: 'chat',
             });
+        },
+
+        deleteRoom(room) {
+            console.log('delete room: ', room);
         },
     },
 };

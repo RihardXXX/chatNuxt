@@ -18,8 +18,18 @@ const { normalizeResponse } = require('./helpers');
 io.on('connection', socket => {
     // получение списка всех комнат и обновление их на клиенте
     socket.on('updateAllRooms', async () => {
+        // все комнаты
         const allRooms = await Room.find();
         io.emit('initialRoomsClient', allRooms);
+    });
+
+    // получение комнат только данного пользователя
+    socket.on('updateMyRooms', async ({ user }) => {
+        // console.log('user: ', user);
+        // получить все комнаты созданные данным пользователем
+        const myRooms = await Room.find({ author: user._id }).exec();
+        // вызывать getMyRooms и положить туда список всех моих комнат
+        io.emit('getMyRooms', myRooms);
     });
 
     // инициализация комнат для общения
@@ -40,11 +50,14 @@ io.on('connection', socket => {
                     socket.emit('setError', errorsList);
                 } else {
                     socket._events.updateAllRooms();
+                    socket._events.updateMyRooms({ user });
                 }
             });
         } else {
             // обновляем состояние списка комнат на клиенте вызывая серверное событие
             socket._events.updateAllRooms();
+            // и обновляем комнаты данного пользователя
+            socket._events.updateMyRooms({ user });
         }
     });
 
@@ -110,6 +123,7 @@ io.on('connection', socket => {
         io.to(room._id).emit('updateCurrentRoom', normalizeRoom(currentRoom));
         // обновляем список всех комнат на клиенте, нужно чтобы другие участники видели кто и в каких комнатах
         socket._events.updateAllRooms();
+        socket._events.updateMyRooms({ user });
         // // то что будем транслироваться для других участников
         // socket.broadcast
         //     .to(room)
@@ -143,6 +157,7 @@ io.on('connection', socket => {
         io.to(room._id).emit('updateCurrentRoom', currentRoom);
         // обновляем список всех комнат на клиенте, нужно чтобы другие участники видели кто и в каких комнатах
         socket._events.updateAllRooms();
+        socket._events.updateMyRooms({ user });
         // то что будем транслироваться для других участников
         // socket.broadcast
         //     .to(room)
@@ -190,13 +205,13 @@ io.on('connection', socket => {
                 currentUser.roomCount -= 1;
                 // сохранить данные пользователя после декремента
                 await currentUser.save();
-                console.log('currentUser', currentUser);
+                // console.log('currentUser', currentUser);
                 // обновить на клиенте данные
                 io.emit('updateUserClient', normalizeResponse(currentUser.toObject()));
 
                 // получить все комнаты созданные данным пользователем
                 const myRooms = await Room.find({ author: user._id }).exec();
-                console.log(111, myRooms);
+                // console.log(111, myRooms);
                 // вызывать getMyRooms и положить туда список всех моих комнат
                 io.emit('getMyRooms', myRooms);
 

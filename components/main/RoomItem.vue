@@ -1,5 +1,7 @@
 <template>
-    <li :class="$style.itemRoom"
+    <li :class="[$style.itemRoom, {
+            [$style._disabled]: disabled,
+        }]"
         @click="$emit('click')"
     >
         <div :class="$style.roomName">
@@ -18,6 +20,14 @@
                 {{ countUser | plural(['пользователь', 'пользователя', 'пользователей']) }}
             </span>
         </div>
+        <button v-if="isMyRoom"
+                :class="$style.roomName"
+                @click.stop="$emit('deleteRoom')"
+        >
+            <svg-icon name="close"
+                      :class="$style.deleteIcon"
+            />
+        </button>
     </li>
 </template>
 
@@ -37,6 +47,19 @@ export default {
             required: false,
             default: 0,
         },
+
+        // eslint-disable-next-line vue/require-default-prop
+        isMyRoom: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+
+        disabled: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
 };
 </script>
@@ -47,7 +70,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-around;
-        margin-top: .3rem;
+        margin: .5rem;
         padding: .8rem 2rem;
         border: .08rem solid $gray-800;
         transition: .4s;
@@ -60,12 +83,21 @@ export default {
         &:hover {
             background-color: $white;
         }
+
+        &._disabled {
+            cursor: auto;
+
+            &:hover {
+                background: none;
+            }
+        }
     }
 
     .roomName {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        //border: none;
     }
 
     .roomIcon {
@@ -78,6 +110,12 @@ export default {
         text-decoration: none;
         font-size: 1.3rem;
         color: $black-900;
+    }
+
+    .deleteIcon {
+        width: 1.5rem;
+        height: 1.5rem;
+        transform: rotate(45deg);
     }
 
 </style>
