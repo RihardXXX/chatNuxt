@@ -1,7 +1,7 @@
 <template>
     <div :class="$style.IndexPage">
-        <Welcome v-if="!isLoggedIn" />
-        <RoomList v-else />
+        <RoomList v-if="isLoggedIn" />
+        <Welcome v-else-if="!isLoading && !isLoggedIn" />
     </div>
 </template>
 
@@ -35,6 +35,7 @@ export default {
     computed: {
         ...mapState('authorization', [
             'isLoggedIn',
+            'isLoading',
         ]),
     },
 };

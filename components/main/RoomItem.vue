@@ -28,6 +28,18 @@
                       :class="$style.deleteIcon"
             />
         </button>
+        <div v-if="isPrivate"
+             :class="$style.privateSection"
+        >
+            <div>
+                приватная
+            </div>
+            <button :class="$style.roomName"
+                    @click.stop="$emit('toInvite')"
+            >
+                пригласить
+            </button>
+        </div>
     </li>
 </template>
 
@@ -56,6 +68,12 @@ export default {
         },
 
         disabled: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+
+        isPrivate: {
             type: Boolean,
             required: false,
             default: false,
@@ -116,6 +134,13 @@ export default {
         width: 1.5rem;
         height: 1.5rem;
         transform: rotate(45deg);
+    }
+
+    .privateSection {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
     }
 
 </style>

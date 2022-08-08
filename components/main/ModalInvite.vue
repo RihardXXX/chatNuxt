@@ -1,50 +1,49 @@
 <template>
     <div :class="$style.container">
         <h3 :class="$style.title">
-            Создать комнату
+            Пригласить пользователей
         </h3>
 
-        <p :class="$style.description">
-            {{ description }}
-        </p>
+        <!--        <p :class="$style.description">-->
+        <!--            {{ description }}-->
+        <!--        </p>-->
 
-        <ul v-if="myRooms.length"
-            :class="$style.roomsList"
-        >
-            <RoomItem v-for="myRoom in myRooms"
-                      :key="myRoom.id"
-                      :name="myRoom.name"
-                      :is-my-room="myRoom.author === user._id"
-                      :is-private="myRoom.author === user._id && myRoom.private"
-                      :count-user="myRoom.users.length"
-                      disabled
-                      @deleteRoom="() => deleteRoom(myRoom)"
-                      @toInvite="() => toInvite(myRoom)"
-            />
-        </ul>
+        <!--        <ul v-if="myRooms.length"-->
+        <!--            :class="$style.roomsList"-->
+        <!--        >-->
+        <!--            <RoomItem v-for="myRoom in myRooms"-->
+        <!--                      :key="myRoom.id"-->
+        <!--                      :name="myRoom.name"-->
+        <!--                      :is-my-room="myRoom.author === user._id"-->
+        <!--                      :is-private="myRoom.author === user._id && myRoom.private"-->
+        <!--                      :count-user="myRoom.users.length"-->
+        <!--                      disabled-->
+        <!--                      @deleteRoom="() => deleteRoom(myRoom)"-->
+        <!--            />-->
+        <!--        </ul>-->
 
-        <VErrorList v-if="errors.length"
-                    :error-list="errors"
-                    :class-container="$style.containerError"
-        />
+        <!--        <VErrorList v-if="errors.length"-->
+        <!--                    :error-list="errors"-->
+        <!--                    :class-container="$style.containerError"-->
+        <!--        />-->
 
 
-        <div v-if="user.roomCount > 0" :class="$style.settingSection">
-            <VInputSend :value="room.roomName"
-                        label="имя комнаты"
-                        icon-name="send"
-                        :style="{ width: '50%' }"
-                        @input="event => room.roomName = event.target.value.trim()"
-                        @keyup.enter.native="createNewRoom"
-                        @click="createNewRoom"
-            />
-            <VToggleButton :active="room.private"
-                           first-name="публичная"
-                           last-name="приватная"
-                           @clickFirst="room.private = false"
-                           @clickLast="room.private = true"
-            />
-        </div>
+        <!--        <div v-if="user.roomCount > 0" :class="$style.settingSection">-->
+        <!--            <VInputSend :value="room.roomName"-->
+        <!--                        label="имя комнаты"-->
+        <!--                        icon-name="send"-->
+        <!--                        :style="{ width: '50%' }"-->
+        <!--                        @input="event => room.roomName = event.target.value.trim()"-->
+        <!--                        @keyup.enter.native="createNewRoom"-->
+        <!--                        @click="createNewRoom"-->
+        <!--            />-->
+        <!--            <VToggleButton :active="room.private"-->
+        <!--                           first-name="публичная"-->
+        <!--                           last-name="приватная"-->
+        <!--                           @clickFirst="room.private = false"-->
+        <!--                           @clickLast="room.private = true"-->
+        <!--            />-->
+        <!--        </div>-->
         <button :class="$style.buttonClose"
                 @click="$emit('close')"
         >
@@ -57,20 +56,19 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import VInputSend from '~/components/ui/input/VInputSend';
-import VToggleButton from '~/components/main/VToggleButton';
-import RoomItem from '~/components/main/RoomItem';
-import VErrorList from '~/components/ui/error/VErrorList';
-import ModalInvite from '~/components/main/ModalInvite';
+// import VInputSend from '~/components/ui/input/VInputSend';
+// import VToggleButton from '~/components/main/VToggleButton';
+// import RoomItem from '~/components/main/RoomItem';
+// import VErrorList from '~/components/ui/error/VErrorList';
 
 export default {
-    name: 'ModalRoomCreate',
+    name: 'ModalInvite',
 
     components: {
-        VInputSend,
-        VToggleButton,
-        RoomItem,
-        VErrorList,
+        // VInputSend,
+        // VToggleButton,
+        // RoomItem,
+        // VErrorList,
     },
 
     props: {
@@ -126,12 +124,6 @@ export default {
         deleteRoom(room) {
             console.log('delete room: ', room);
             this.$socket.emit('deleteMyRoom', { room, user: this.user });
-        },
-
-        toInvite(room) {
-            console.log(room);
-            this.$emit('close');
-            this.$modal.open(ModalInvite);
         },
     },
 };

@@ -164,15 +164,11 @@ io.on('connection', socket => {
         //     .emit('addMessageFromServer', createMessage(`Пользователь ${username} вышел из комнаты`, 'admin'));
     });
 
-    // сменить комнату
-    // socket.on('changeRoom', ({ user, idRoom }, cb) => {
-    //     socket.$emit('joinedRooms', { user, room: idRoom });
-    // });
-
     // создать новую комнату
     socket.on('createNewRoom', ({ room, user }, cb) => {
         // console.log('user: ', user);
         // console.log('room: ', room);
+        socket.emit('setError', []);
 
         // если нет автора или имени комнаты то бросаем ошибку
         if (!user._id || !room.roomName) {
@@ -218,10 +214,43 @@ io.on('connection', socket => {
                 // обновление всех комнат на клиенте
                 socket._events.updateAllRooms();
             } else {
-                const errorsList = Object.values(err.errors).map(item => item.properties.message);
-                socket.emit('setError', errorsList);
+                // console.log('XXXXXXXXXXX_XXXXXXXXX: ', err.message);
+                // const errorsList = Object.values(err.errors).map(item => item.properties.message);
+                socket.emit('setError', ['комната с таким именем уже существует']);
             }
         });
+    });
+
+    // удалить мою комнату
+    socket.on('deleteMyRoom', async ({ room, user }, cb) => {
+        socket.emit('setError', []);
+        // console.log('room: ', room.author);
+        // console.log('user: ', user._id);
+        // проверить является ли он автором комнаты
+        if (room.author !== user._id) {
+            socket.emit('setError', ['вы не являетесь автором комнаты']);
+            return false;
+        }
+
+        try {
+            // найти данную комнату и удалить её
+            await Room.deleteOne({ _id: room._id });
+
+            // добавить текущему пользователю счетчик инкремент в поле количество комнат
+            const currentUser = await User.findById(user._id);
+            // уменьшаем количество комнат для создания у пользователя
+            currentUser.roomCount += 1;
+            // сохранить данные пользователя после декремента
+            await currentUser.save();
+            // обновить на клиенте данные
+            io.emit('updateUserClient', normalizeResponse(currentUser.toObject()));
+
+            // обновить состояние всех комнат и моих комнат
+            socket._events.updateAllRooms();
+            socket._events.updateMyRooms({ user });
+        } catch (err) {
+            socket.emit('setError', ['удаление комнаты не удалось']);
+        }
     });
 });
 

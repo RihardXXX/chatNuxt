@@ -5,6 +5,7 @@ export const state = () => ({
     token: '',
     isLoggedIn: false,
     errors: null,
+    isLoading: false,
 });
 
 export const mutations = {
@@ -13,6 +14,9 @@ export const mutations = {
     },
     setIsLoggedIn(state, status) {
         state.isLoggedIn = status;
+    },
+    setIsLoading(state, status) {
+        state.isLoading = status;
     },
     setToken(state, token) {
         state.token = token;
@@ -29,7 +33,8 @@ export const actions = {
     },
     // автоматическая авторизация по токену на клиенте
     authUser({ commit }) {
-        const token = window.localStorage.getItem('token');
+        commit('setIsLoading', true);
+        const token = window?.localStorage.getItem('token');
         if (!token) {
             return false;
         }
@@ -40,6 +45,7 @@ export const actions = {
                 commit('setUser', user);
                 commit('setIsLoggedIn', true);
                 commit('setToken', token);
+                commit('setIsLoading', false);
             })
             .catch(err => console.log(err.response.data.message));
     },

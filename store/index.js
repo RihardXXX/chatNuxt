@@ -4,7 +4,7 @@ export const state = () => ({
     // текущая комната
     currentRoom: null,
     // массив ошибок
-    errors: null,
+    errors: [],
     // комнаты созданные мною
     myRooms: [],
 });

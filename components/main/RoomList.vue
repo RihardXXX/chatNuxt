@@ -16,9 +16,11 @@
                           :key="room.id"
                           :name="room.name"
                           :is-my-room="room.author === user._id"
+                          :is-private="room.author === user._id && room.private"
                           :count-user="room.users.length"
                           @click="() => nextRoom(room)"
                           @deleteRoom="() => deleteRoom(room)"
+                          @toInvite="() => toInvite(room)"
                 />
             </ul>
         </div>
@@ -38,9 +40,11 @@
                           :key="room.id"
                           :name="room.name"
                           :is-my-room="room.author === user._id"
+                          :is-private="room.author === user._id && room.private"
                           :count-user="room.users.length"
                           @click="() => nextRoom(room)"
                           @deleteRoom="() => deleteRoom(room)"
+                          @toInvite="() => toInvite(room)"
                 />
             </ul>
             <div v-else>
@@ -53,6 +57,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import RoomItem from '~/components/main/RoomItem';
+import ModalInvite from '~/components/main/ModalInvite';
 
 export default {
     name: 'RoomList',
@@ -106,6 +111,12 @@ export default {
 
         deleteRoom(room) {
             console.log('delete room: ', room);
+            this.$socket.emit('deleteMyRoom', { room, user: this.user });
+        },
+
+        toInvite(room) {
+            console.log(room);
+            this.$modal.open(ModalInvite);
         },
     },
 };
