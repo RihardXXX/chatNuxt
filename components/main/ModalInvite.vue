@@ -4,6 +4,16 @@
             Пригласить пользователей
         </h3>
 
+
+        <div :class="$style.usersContainer">
+            <div v-for="(item, i) in new Array(70)"
+                 :key="i+1"
+                 :class="$style.userCard"
+            >
+                {{ i }}
+            </div>
+        </div>
+
         <!--        <p :class="$style.description">-->
         <!--            {{ description }}-->
         <!--        </p>-->
@@ -148,11 +158,27 @@ export default {
         bottom: 0;
         display: block;
         width: 90%;
-        height: auto;
+        height: 50%;
         padding: $offset * 4 $offset * 6;
         border-radius: 1rem 1rem 0 0;
         background-color: $gray-700;
         box-shadow: 0 8px 24px rgba($black-400, .1);
+    }
+
+    .usersContainer {
+        overflow: auto;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 80%;
+        //flex-direction: column;
+    }
+
+    .userCard {
+        width: 25%;
+        height: 4rem;
+        //margin: 1rem;
+        border: 1px solid black;
     }
 
     .settingSection {
