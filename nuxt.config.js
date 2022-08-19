@@ -63,9 +63,12 @@ module.exports = {
 
     // Customize the progress-bar color
     loading: {
-        color: '#d6ffcf',
+        color: '#FF4963',
         failedColor: '#ffcfcf',
+        height: '20px',
+        duration: 2000,
     },
+
 
     // Head section
     head: headConfig,

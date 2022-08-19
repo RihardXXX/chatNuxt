@@ -3,30 +3,51 @@
 
         <TheModal :class="$style.modal" />
 
+        <StartPage v-if="step === 1" />
+
         <main :class="$style.page">
-            <Nuxt />
+            <Nuxt v-if="step === 2" />
         </main>
 
-        <TheHeader v-if="isLoggedIn" />
+        <TheHeader v-if="isLoggedIn && step === 2" />
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import StartPage from '~/components/common/StartPage';
 import TheModal from '@/components/default/TheModal';
 import TheHeader from '~/components/default/TheHeader';
+
 export default {
     name: 'Default',
 
     components: {
+        StartPage,
         TheModal,
         TheHeader,
+    },
+
+    data() {
+        return {
+            step: 1,
+        };
     },
 
     computed: {
         ...mapState('authorization', [
             'isLoggedIn',
         ]),
+    },
+
+    mounted() {
+        this.$nextTick(() => {
+            this.$nuxt.$loading.start();
+            setTimeout(() => {
+                this.$nuxt.$loading.finish();
+                this.step = 2;
+            }, 2000);
+        });
     },
 
     beforeMount() {

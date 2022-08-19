@@ -1,7 +1,7 @@
 <template>
     <div :class="$style.IndexPage">
         <RoomList v-if="isLoggedIn" />
-        <Welcome v-else-if="!isLoading && !isLoggedIn" />
+        <Welcome v-else/>
     </div>
 </template>
 

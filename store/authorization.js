@@ -39,6 +39,7 @@ export const actions = {
             return false;
         }
         const url = moduleApi.authorization.auth;
+
         this.$axios.get(url)
             .then(response => {
                 const user = response.data.user;
