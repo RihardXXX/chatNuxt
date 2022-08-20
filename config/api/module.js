@@ -5,6 +5,7 @@ const moduleApi = {
         login: '/authorization/logIn',
         logout: '/authorization/logOut',
         auth: '/authorization/auth',
+        allUsers: '/authorization/allUsers',
     },
 };
 

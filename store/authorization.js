@@ -6,6 +6,7 @@ export const state = () => ({
     isLoggedIn: false,
     errors: null,
     isLoading: false,
+    allUsers: null,
 });
 
 export const mutations = {
@@ -20,6 +21,9 @@ export const mutations = {
     },
     setToken(state, token) {
         state.token = token;
+    },
+    setAllUsers(state, allUsers) {
+        state.allUsers = [...allUsers];
     },
 };
 
@@ -73,5 +77,12 @@ export const actions = {
     // это для сокета обновление состояния данных юзера с сервера
     SOCKET_updateUserClient({ commit }, user) {
         commit('setUser', user);
+    },
+    // получение списка всех пользователей приложения, чтобы приглашать можно было
+    getAllUsers({ commit }) {
+        const url = moduleApi.authorization.allUsers;
+        this.$axios.get(url)
+            .then(res => commit('setAllUsers', res.data.allUsers))
+            .catch(err => console.log(err.response.data.message));
     },
 };
