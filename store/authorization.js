@@ -6,7 +6,7 @@ export const state = () => ({
     isLoggedIn: false,
     errors: null,
     isLoading: false,
-    allUsers: null,
+    allUsers: [],
 });
 
 export const mutations = {

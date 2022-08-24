@@ -4,13 +4,26 @@
             Пригласить пользователей
         </h3>
 
-
-        <div v-if="allUsers.length" :class="$style.usersContainer">
+        <div v-if="allUsers.length"
+             :class="$style.usersContainer"
+        >
             <div v-for="(user, i) in allUsers"
                  :key="i+1"
                  :class="$style.userCard"
             >
-                {{ user.username }}
+                <PersonLogo :username="user.username"
+                            img="/images/avatar1.png"
+                            :style="{ margin: '0 auto' }"
+                />
+                <button :class="$style.buttonInvite"
+                        @click="toInvite(user)"
+                >
+                    <svg-icon name="invite"
+                              :class="[$style.iconInvite, {
+                                  [$style._invited]: i === 0,
+                              }]"
+                    />
+                </button>
             </div>
         </div>
 
@@ -26,6 +39,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import PersonLogo from '~/components/common/PersonLogo';
 // import VInputSend from '~/components/ui/input/VInputSend';
 // import VToggleButton from '~/components/main/VToggleButton';
 // import RoomItem from '~/components/main/RoomItem';
@@ -39,6 +53,7 @@ export default {
         // VToggleButton,
         // RoomItem,
         // VErrorList,
+        PersonLogo,
     },
 
     props: {
@@ -73,6 +88,10 @@ export default {
 
     methods: {
         ...mapActions('authorization', ['getAllUsers']),
+
+        toInvite(user) {
+            console.log('to invite', user);
+        },
     },
 };
 </script>
@@ -113,10 +132,12 @@ export default {
     }
 
     .userCard {
+        display: flex;
         width: 25%;
-        height: 4rem;
+        flex-direction: column;
+        //height: 4rem;
         //margin: 1rem;
-        border: 1px solid black;
+        //border: 1px solid black;
     }
 
     .settingSection {
@@ -203,5 +224,22 @@ export default {
     .containerError {
         width: auto;
         margin: 1rem 4rem;
+    }
+
+    .buttonInvite {
+        width: 50%;
+        margin: 0 auto;
+        border: none;
+        background-color: transparent;
+    }
+
+    .iconInvite {
+        width: 100%;
+        height: 2rem;
+        fill: $gray-400;
+        //fill: red;
+        &._invited {
+            fill: $black-900;
+        }
     }
 </style>

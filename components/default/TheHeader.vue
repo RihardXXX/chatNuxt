@@ -21,16 +21,9 @@
                       :class="$style.exitIcon"
             />
         </div>
-        <div :class="$style.person">
-            <div :class="$style.borderLogo">
-                <img src="/images/avatar1.png"
-                     :class="$style.avatar"
-                />
-            </div>
-            <div :class="$style.username">
-                {{ username }}
-            </div>
-        </div>
+        <PersonLogo :username="username"
+                    img="/images/avatar1.png"
+        />
         <div :class="$style.exit"
              @click="exitLogin"
         >
@@ -45,12 +38,14 @@
 import { mapState, mapActions } from 'vuex';
 import VButton from '~/components/ui/button/VButton';
 import ModalRoomCreate from '~/components/main/ModalRoomCreate';
+import PersonLogo from '~/components/common/PersonLogo';
 
 export default {
     name: 'TheHeader',
 
     components: {
         VButton,
+        PersonLogo,
     },
 
     computed: {
@@ -117,55 +112,55 @@ export default {
         height: 4rem;
     }
 
-    .person {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        width: 8rem;
-        height: 9.1rem;
-        //border: 1px solid black;
-    }
+    //.person {
+    //    position: relative;
+    //    display: flex;
+    //    justify-content: center;
+    //    width: 8rem;
+    //    height: 9.1rem;
+    //    //border: 1px solid black;
+    //}
+    //
+    //.borderLogo {
+    //    position: relative;
+    //    display: flex;
+    //    align-items: center;
+    //    justify-content: center;
+    //    width: 6.7rem;
+    //    height: 6.7rem;
+    //    margin-top: .5rem;
+    //    border-radius: 100%;
+    //    background: #fff;
+    //    text-align: center;
+    //
+    //    &:before {
+    //        content: "";
+    //        position: absolute;
+    //        top: -2.3px;
+    //        right: -2.3px;
+    //        bottom: -2.3px;
+    //        left: -2.3px;
+    //        z-index: -1;
+    //        border-radius: 100%;
+    //        background: linear-gradient(180deg, #de0046, #f7a34b);
+    //    }
+    //}
 
-    .borderLogo {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 6.7rem;
-        height: 6.7rem;
-        margin-top: .5rem;
-        border-radius: 100%;
-        background: #fff;
-        text-align: center;
-
-        &:before {
-            content: "";
-            position: absolute;
-            top: -2.3px;
-            right: -2.3px;
-            bottom: -2.3px;
-            left: -2.3px;
-            z-index: -1;
-            border-radius: 100%;
-            background: linear-gradient(180deg, #de0046, #f7a34b);
-        }
-    }
-
-    .avatar {
-        z-index: 112;
-        width: 6rem;
-        height: 6rem;
-    }
-
-    .username {
-        position: absolute;
-        bottom: .5rem;
-        left: 50%;
-        text-align: center;
-        font-size: 1.15rem;
-        font-weight: 400;
-        transform: translateX(-50%);
-    }
+    //.avatar {
+    //    z-index: 112;
+    //    width: 6rem;
+    //    height: 6rem;
+    //}
+    //
+    //.username {
+    //    position: absolute;
+    //    bottom: .5rem;
+    //    left: 50%;
+    //    text-align: center;
+    //    font-size: 1.15rem;
+    //    font-weight: 400;
+    //    transform: translateX(-50%);
+    //}
 
     .rooms {
         position: relative;
