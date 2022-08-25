@@ -107,4 +107,61 @@ authorizationRouter.get('/allUsers', async function(req, res) {
     }
 });
 
+// добавление приглашений от пользователя
+authorizationRouter.post('/addInvite', async function(req, res) {
+    // получаем из хедара токен
+    const token = req.headers.authorization.split(' ')[1];
+
+    try {
+        // парсим токен и получаем почту и тп данные
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded) {
+            const email = decoded.email;
+            // находим из БД пользорвателя и возвращаем его
+            const user = await User.findOne({ email }).exec();
+            if (!user) {
+                return res.status(500).json({ message: 'пройдите авторизацию чтобы получить список пользователей' });
+            }
+
+            // забираем из тела запроса комнату в которую приглашаем и кого приглашаем
+            const { invitedUser, invitedRoom } = req.body.data;
+
+            console.log('invitedUser: ', invitedUser);
+            console.log('invitedRoom: ', invitedRoom);
+
+            // находим пользователя которого надо пригласить
+            const isUser = await User.findOne({ email: invitedUser.email }).exec();
+
+            if (!isUser) {
+                return res.status(500).json({ message: 'такого пользователя не существует' });
+            }
+
+            // добавляем комнату если её нет, если есть удаляем
+            const isRoomInvited = isUser.invitedRooms.some(room => room._id === invitedRoom._id);
+
+            console.log('isRoomInvited: ', isRoomInvited);
+
+            // if (isRoomInvited) {
+            //     isUser.invitedRooms = isUser.invitedRooms.filter(room => room.name !== invitedRoom.name);
+            // } else {
+            //     isUser.invitedRooms = [isUser.invitedRooms, invitedRoom];
+            // }
+
+
+            // // получаем список всех пользователей
+            // const users = await User.find({});
+            // // убираем пароли у каждого пользователя и себя из списка
+            // const allUsers = users.map(user => {
+            //     delete user.password;
+            //     return user;
+            // })
+            //     .filter(item => item._id.toString() !== user._id.toString());
+            //
+            // return res.status(200).json({ allUsers });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err });
+    }
+});
+
 module.exports = authorizationRouter;

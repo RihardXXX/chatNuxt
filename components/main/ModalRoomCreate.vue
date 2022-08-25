@@ -129,9 +129,11 @@ export default {
         },
 
         toInvite(room) {
-            console.log(room);
+            // console.log(123, room);
             this.$emit('close');
-            this.$modal.open(ModalInvite);
+            this.$modal.open(ModalInvite, {
+                invitedRoom: room,
+            });
         },
     },
 };

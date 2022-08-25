@@ -20,7 +20,7 @@
                 >
                     <svg-icon name="invite"
                               :class="[$style.iconInvite, {
-                                  [$style._invited]: i === 0,
+                                  [$style._invited]: false,
                               }]"
                     />
                 </button>
@@ -66,6 +66,12 @@ export default {
         //     type: String,
         //     default: '',
         // },
+
+        invitedRoom: {
+            type: Object,
+            required: false,
+            default: () => ({}),
+        },
     },
 
     data() {
@@ -89,8 +95,22 @@ export default {
     methods: {
         ...mapActions('authorization', ['getAllUsers']),
 
-        toInvite(user) {
-            console.log('to invite', user);
+        toInvite(invitedUser) {
+            // console.log('invitedUser', invitedUser);
+            // console.log('invitedRoom', this.invitedRoom);
+
+            const url = this.$api.authorization.addInvite;
+
+            this.$axios.post(url, {
+                data: {
+                    invitedUser,
+                    invitedRoom: this.invitedRoom,
+                },
+            })
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(err => console.log(err.response.data.message));
         },
     },
 };
