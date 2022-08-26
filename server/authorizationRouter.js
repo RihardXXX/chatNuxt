@@ -126,8 +126,8 @@ authorizationRouter.post('/addInvite', async function(req, res) {
             // забираем из тела запроса комнату в которую приглашаем и кого приглашаем
             const { invitedUser, invitedRoom } = req.body.data;
 
-            console.log('invitedUser: ', invitedUser);
-            console.log('invitedRoom: ', invitedRoom);
+            // console.log('invitedUser: ', invitedUser);
+            // console.log('invitedRoom: ', invitedRoom);
 
             // находим пользователя которого надо пригласить
             const isUser = await User.findOne({ email: invitedUser.email }).exec();
@@ -139,25 +139,19 @@ authorizationRouter.post('/addInvite', async function(req, res) {
             // добавляем комнату если её нет, если есть удаляем
             const isRoomInvited = isUser.invitedRooms.some(room => room._id === invitedRoom._id);
 
-            console.log('isRoomInvited: ', isRoomInvited);
+            // console.log('isRoomInvited: ', isRoomInvited);
 
-            // if (isRoomInvited) {
-            //     isUser.invitedRooms = isUser.invitedRooms.filter(room => room.name !== invitedRoom.name);
-            // } else {
-            //     isUser.invitedRooms = [isUser.invitedRooms, invitedRoom];
-            // }
-
-
-            // // получаем список всех пользователей
-            // const users = await User.find({});
-            // // убираем пароли у каждого пользователя и себя из списка
-            // const allUsers = users.map(user => {
-            //     delete user.password;
-            //     return user;
-            // })
-            //     .filter(item => item._id.toString() !== user._id.toString());
-            //
-            // return res.status(200).json({ allUsers });
+            if (isRoomInvited) {
+                // если уже приглашен, то снимаем приглашение
+                isUser.invitedRooms = isUser.invitedRooms.filter(room => room._id !== invitedRoom._id);
+                await isUser.save();
+                return res.status(200).json({ result: 'remove invite' });
+            } else {
+                // если не приглашен, то добавляем приглашение
+                isUser.invitedRooms = [isUser.invitedRooms, invitedRoom];
+                await isUser.save();
+                return res.status(200).json({ result: 'add invite' });
+            }
         }
     } catch (err) {
         return res.status(500).json({ message: err });

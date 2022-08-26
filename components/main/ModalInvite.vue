@@ -20,7 +20,7 @@
                 >
                     <svg-icon name="invite"
                               :class="[$style.iconInvite, {
-                                  [$style._invited]: false,
+                                  [$style._invited]: user.invitedRooms.some(room => room._id === invitedRoom._id),
                               }]"
                     />
                 </button>
@@ -96,9 +96,6 @@ export default {
         ...mapActions('authorization', ['getAllUsers']),
 
         toInvite(invitedUser) {
-            // console.log('invitedUser', invitedUser);
-            // console.log('invitedRoom', this.invitedRoom);
-
             const url = this.$api.authorization.addInvite;
 
             this.$axios.post(url, {
@@ -106,11 +103,16 @@ export default {
                     invitedUser,
                     invitedRoom: this.invitedRoom,
                 },
-            })
-                .then(res => {
-                    console.log(res);
-                })
+            }) // после добавления или удаления приглашения обновляем состояние пользователей
+                .then(() => this.getAllUsers())
                 .catch(err => console.log(err.response.data.message));
+        },
+
+        // определят состояние пригласили пользователя или нет
+        isInvited(user) {
+            // return false;
+            console.log('user: ', user);
+            console.log('inVitedRoom: ', this.isInvited);
         },
     },
 };
