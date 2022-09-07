@@ -20,10 +20,15 @@
                 >
                     <svg-icon name="invite"
                               :class="[$style.iconInvite, {
-                                  [$style._invited]: user.invitedRooms.some(room => room._id === invitedRoom._id),
+                                  [$style._invited]: isInvited(user),
                               }]"
                     />
                 </button>
+                <div v-if="isInvited(user)"
+                     :class="$style.infoInvite"
+                >
+                    приглашён
+                </div>
             </div>
         </div>
 
@@ -111,8 +116,9 @@ export default {
         // определят состояние пригласили пользователя или нет
         isInvited(user) {
             // return false;
-            console.log('user: ', user);
-            console.log('inVitedRoom: ', this.isInvited);
+            // console.log('user: ', user);
+            // console.log('inVitedRoom: ', this.isInvited);
+            return user.invitedRooms.some(room => room._id === this.invitedRoom._id);
         },
     },
 };
@@ -263,5 +269,9 @@ export default {
         &._invited {
             fill: $black-900;
         }
+    }
+
+    .infoInvite {
+        text-align: center;
     }
 </style>

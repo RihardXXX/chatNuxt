@@ -9,6 +9,11 @@
                 <div :class="$style.vertical"></div>
             </div>
         </VButton>
+        <VButton v-if="isInvited"
+                 name="мои приглашения"
+                 :class-container="$style.buttonInvite"
+                 @click.native="openModalInvites"
+        />
         <div :class="$style.iconInstagramSection">
             <svg-icon name="logoHeader"
                       :class="$style.iconInstagram"
@@ -39,6 +44,7 @@ import { mapState, mapActions } from 'vuex';
 import VButton from '~/components/ui/button/VButton';
 import ModalRoomCreate from '~/components/main/ModalRoomCreate';
 import PersonLogo from '~/components/common/PersonLogo';
+import ModalListInvitedRooms from '~/components/main/ModalListInvitedRooms';
 
 export default {
     name: 'TheHeader',
@@ -59,6 +65,11 @@ export default {
 
         username() {
             return this.user.username;
+        },
+
+        // есть ли приглашения
+        isInvited() {
+            return this.user.invitedRooms.length;
         },
     },
 
@@ -84,6 +95,12 @@ export default {
         openModal() {
             console.log('open');
             this.$modal.open(ModalRoomCreate);
+        },
+
+        // открыть модалку с приглашениями
+        openModalInvites() {
+            console.log('openModalInvites');
+            this.$modal.open(ModalListInvitedRooms);
         },
     },
 };
@@ -209,6 +226,7 @@ export default {
         width: 20%;
         padding: .4rem .6rem;
         border: 2px solid $black-900;
+        text-align: center;
 
         span {
             color: $black-900;
@@ -232,6 +250,13 @@ export default {
                 transition: .7s;
             }
         }
+    }
+
+    .buttonInvite {
+        @extend .button;
+
+        right: 0;
+        left: unset;
     }
 
     .addRoom {

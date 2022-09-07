@@ -148,7 +148,7 @@ authorizationRouter.post('/addInvite', async function(req, res) {
                 return res.status(200).json({ result: 'remove invite' });
             } else {
                 // если не приглашен, то добавляем приглашение
-                isUser.invitedRooms = [isUser.invitedRooms, invitedRoom];
+                isUser.invitedRooms.push(invitedRoom);
                 await isUser.save();
                 return res.status(200).json({ result: 'add invite' });
             }
